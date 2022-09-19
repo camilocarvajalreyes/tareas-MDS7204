@@ -4,6 +4,9 @@ from filtros.filtro_kalman import KalmanFilter1D
 
 # parámetros de este código
 np.random.seed(0)
+save_plots = False  # si guardar o no las figuras
+img_dir = "unidad_1/tarea_1/informe/img"  # directorio en caso de guardar las figuras
+display_plots = True  # si se muestran o no las figuras (pop-up)
 
 # Simulación de las series
 
@@ -31,8 +34,12 @@ for i in range(n_samples):
         pass
     Y[i] = C*X[i] + D*W[i]
 
-plot_series(X,'X')
-plot_series(Y,'Y','tab:orange')
+if save_plots:
+    plot_series(X,'X',save='serie_x.png',folder=img_dir,display=display_plots)
+    plot_series(Y,'Y','tab:orange',save='serie_y.png',folder=img_dir,display=display_plots)
+else:
+    plot_series(X,'X',display=display_plots)
+    plot_series(Y,'Y','tab:orange',display=display_plots)
 
 # Filtro de Kalman
 
@@ -64,6 +71,9 @@ X_pred = filter.x_predicted()
 X_updt = filter.x_updated()
 # plot_series(X_updt,'X updated')
 
-plot_series([X,X_updt],['X','X updated'])
-
-plot_series([X,X_pred,X_updt],['X','X predicted','X updated'])
+if save_plots:
+    plot_series([X,X_updt],['X','X updated'],save='x_x_updt.png',folder=img_dir,display=display_plots)
+    plot_series([X,X_pred,X_updt],['X','X predicted','X updated'],save='x_x_updt_x_pred.png',folder=img_dir,display=display_plots)
+else:
+    plot_series([X,X_updt],['X','X updated'],display=display_plots)
+    plot_series([X,X_pred,X_updt],['X','X predicted','X updated'],display=display_plots)
