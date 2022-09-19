@@ -1,4 +1,6 @@
 clase_*/
 enunciado*.pdf
 unidad_1/Vetterli-Foundations_of_Signal_Processing.pdf
+.ipynb_checkpoints/
 __pycache__
+unidad_1/tarea_1/tarea_1_filtro_kalman.ipynb
