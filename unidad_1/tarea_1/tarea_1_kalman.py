@@ -6,7 +6,7 @@ from filtros.filtro_kalman import KalmanFilter1D
 np.random.seed(0)
 save_plots = False  # si guardar o no las figuras
 img_dir = "unidad_1/tarea_1/informe/img"  # directorio en caso de guardar las figuras
-display_plots = True  # si se muestran o no las figuras (pop-up)
+display_plots = True  # si se muestran o no las figuras (pop-up), no funciona al mismo tiempo que save_plots
 
 # Simulación de las series
 
@@ -35,16 +35,18 @@ for i in range(n_samples):
     Y[i] = C*X[i] + D*W[i]
 
 if save_plots:
-    plot_series(X,'X',save='serie_x.png',folder=img_dir,display=display_plots)
-    plot_series(Y,'Y','tab:orange',save='serie_y.png',folder=img_dir,display=display_plots)
+    plot_series([X,Y],['X','Y'],save='series_x_y.png',folder=img_dir,display=display_plots)
+    # plot_series(X,'X',save='serie_x.png',folder=img_dir,display=display_plots)
+    # plot_series(Y,'Y','tab:orange',save='serie_y.png',folder=img_dir,display=display_plots)
 else:
-    plot_series(X,'X',display=display_plots)
-    plot_series(Y,'Y','tab:orange',display=display_plots)
+    plot_series([X,Y],['X','Y'],display=display_plots)
+    # plot_series(X,'X',display=display_plots)
+    # plot_series(Y,'Y','tab:orange',display=display_plots)
 
 # Filtro de Kalman
 
 # definiendo el filtro
-filter = KalmanFilter1D(Y[0],B*D,A,B,C,D)
+filter = KalmanFilter1D(Y[0],0.8,A,B,C,D)
 
 # aplicación manual de las primeras iteraciones
 filter.predict()

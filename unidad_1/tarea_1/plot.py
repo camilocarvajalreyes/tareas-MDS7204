@@ -27,7 +27,7 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
     
     """
     sns.set_theme(style="whitegrid")
-    _, ax = plt.subplots(figsize=(12,4))
+    _, ax = plt.subplots(figsize=(12,5))
     if isinstance(y_tag,list):
         assert(len(series)==len(y_tag))
         for i in range(len(y_tag)):
