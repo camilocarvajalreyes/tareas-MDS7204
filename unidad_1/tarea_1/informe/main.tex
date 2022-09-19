@@ -66,5 +66,25 @@
 % Ejemplo, se puede borrar
 \lipsum[1]
 
+\begin{table}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{parámetro}        & \multicolumn{1}{r|}{\textbf{valor}} \\ \hline
+A                         & \multicolumn{1}{r|}{0.5488}         \\ \hline
+B                         & \multicolumn{1}{r|}{1.0860}         \\ \hline
+\textbf{C}                & 0.6027                              \\ \hline
+\textbf{C}                & 0.5179                              \\ \hline
+\textbf{Posición inicial} & 1.4940                              \\ \hline
+\end{tabular}
+\end{table}
+
+\insertimage[\label{img:serie_x}]{img/serie_x}{scale=0.5}{Serie $X$}
+\insertimage[\label{img:serie_y}]{img/serie_y}{scale=0.5}{Serie $Y$}
+
+\lipsum[2]
+
+% \insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.5}{Serie X junto con las predicciones del filtro pre y post actualización}
+\insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
+
 % FIN DEL DOCUMENTO
 \end{document}
