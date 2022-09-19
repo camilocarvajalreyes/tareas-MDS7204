@@ -15,7 +15,7 @@
 \documentclass[letterpaper,11pt,oneside]{article}
 
 % INFORMACIÓN DEL DOCUMENTO
-\def\titulodelreporte {\textbf{Tarea 1 - Filtros de partículas}}
+\def\titulodelreporte {\textbf{Tarea 1 - Filtros en series de tiempo}\\MDS7204 - Aprendizaje de Máquinas Avanzado}
 \def\temaatratar {Tarea 1}
 \def\fechadelreporte {\today}
 
@@ -63,8 +63,39 @@
 % 	\lipsum[11]
 % \end{abstract}
 
-% Ejemplo, se puede borrar
-\lipsum[1]
+\section{Introducción}
+El presente informe aborda las implementaciones de dos métodos de predicción en series de tiempo: el filtro de Kalman y el filtro de partículas. Ambos integran un conjunto de métodos predictivos secuenciales cuya naturaleza general abordaremos a continuación para el caso unidimensional.
+
+\newp Supongamos que queremos encontrar una sucesión (indexada en los naturales) $X$ definida en los reales. Cada elemento $X_n$ de la sucesión describe algún fenómeno en el instante de tiempo $n$. Diremos que su comportamiento dinámico estará dado por
+
+$$ X_n = f_n(X_{n-1},V_{n-1})$$
+
+Acá cada $f_n$ es una función $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{R}$ que no necesariamente será lineal, y $(V_n)_{n\in\mathhnn{N}}$ son realizaciones independientes de una v.a. que modela ruido. Normalmente no tendremos acceso a los valores reales de $X$, pero si podremos hacer observaciones, lo cual nos genera una sucesión $Y$. La naturaleza de tal observaciones estarán dadas por la expresión siguiente:
+
+$$ Y_n = h_n(X_n,W_n)$$
+
+Nuevamente los $h_n$ serán funciones $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{R}$ (posiblemente) no lineales y $W$ será una sucesión aleatoria i.i.d. que modela el ruido. Para llevar a cabo las estimaciones de manera secuencial, tomaremos la probabilidad de ocurrencia de los valores de manera Bayesiana.  % :
+
+% \begin{enumerate}
+%     \item \textbf{Predicción}: Primero computamos la probabilidad del estado siguiente dadas las observaciones hasta el tiempo anterior usando probabilidades totales.
+%     $$ p(X_n|Y_{1:n-1}) = \displaystyle \int p(X_n|X_{n-1})p(X_{n-1}|Y_{1:n-1})dX_{n-1}$$
+%     \item \textbf{Actualización}: En este paso incorporamos la información de la medición en el tiempo actual, con lo cual se puede usar el teorema de Bayes.
+%     $$ p(X_n|Y_{1:n}) = \frac{p(Y_n|X_{n})p(X_n|Y_{1:n-1})}{p(Y_n|Y_{1:n-1})}$$
+% \end{enumerate}
+
+\section{Filtro de Kalman}
+Primero consideremos $f,h,V$ y $W$ como sigue:
+$$ f(X_n) = A X_{n-1} + B V_n ,\hspace{.5cm} h_n(X_n) = C X_n + DW_n$$
+lo cual corresponde a un modelo lineal, pues $A,B,C,D$ son constantes. Además tanto $V$ como $W$ son sucesiones de ruido Gaussiano $\mathcal{N}(0,1)$. Consideramos estos datos como inout para nuestro modelo, que evolucionará en dos etapas:
+\begin{enumerate}
+    \item \textbf{Predicción}: primeramente se computan las predicciones a priori tanto de $X_n$ como de la varianza, que denotamos $P_n$.
+    $$ \hat X_{n|n-1} = A \hat X_{n-1},\hspace{.5cm} P_{n|n-1} = A^2 P_{n-1|n-1} + Q$$
+    donde $Q$ es la varianza del ruido en la ecuación de estado. Notemos que en este caso, esto es igual a $B$, pues hemos definido ruidos normales estándar.
+    \item \textbf{Actualización}: una vez que la medición se vuelve disponible, podemos incorporarla en nuestra estimación. Esto se hace usando un valor que llamaremos la ganancia de Kalman. Este parámetro nos dice cuanto priorizar la medición versus nuestro estimado usando la confianza en las medidiciones, y estará dada por:
+    $$ K_n = \dots$$
+\end{enumerate}
+
+\newp Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obteniendo los siguientes valores:
 
 \begin{table}
 \begin{tabular}{|c|l|}
@@ -73,8 +104,8 @@
 A                         & \multicolumn{1}{r|}{0.5488}         \\ \hline
 B                         & \multicolumn{1}{r|}{1.0860}         \\ \hline
 \textbf{C}                & 0.6027                              \\ \hline
-\textbf{C}                & 0.5179                              \\ \hline
-\textbf{Posición inicial} & 1.4940                              \\ \hline
+\textbf{D}                & 0.5179                              \\ \hline
+\textbf{posición inicial} & 1.4940                              \\ \hline
 \end{tabular}
 \end{table}
 
@@ -83,8 +114,10 @@ B                         & \multicolumn{1}{r|}{1.0860}         \\ \hline
 
 \lipsum[2]
 
-% \insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.5}{Serie X junto con las predicciones del filtro pre y post actualización}
-\insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
+\insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.5}{Serie X junto con las predicciones del filtro pre y post actualización}
+% \insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
+
+\section{Filtro de Partículas}
 
 % FIN DEL DOCUMENTO
 \end{document}
