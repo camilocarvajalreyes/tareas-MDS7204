@@ -63,18 +63,12 @@
 % 	\lipsum[11]
 % \end{abstract}
 
-\section{Introducción}
-El presente informe aborda las implementaciones de dos métodos de predicción en series de tiempo: el filtro de Kalman y el filtro de partículas. Ambos integran un conjunto de métodos predictivos secuenciales cuya naturaleza general abordaremos a continuación para el caso unidimensional.
+% \section{Introducción}
+% El presente informe aborda las implementaciones de dos métodos de predicción en series de tiempo: el filtro de Kalman y el filtro de partículas. Ambos integran un conjunto de métodos predictivos secuenciales cuya naturaleza general abordaremos a continuación para el caso unidimensional.
 
-\newp Supongamos que queremos encontrar una sucesión (indexada en los naturales) $X$ definida en los reales. Cada elemento $X_n$ de la sucesión describe algún fenómeno en el instante de tiempo $n$. Diremos que su comportamiento dinámico estará dado por
+\newp Supongamos que queremos encontrar una sucesión (indexada en los naturales) $X$ definida en los reales. Cada elemento $X_n$ de la sucesión describe algún fenómeno en el instante de tiempo $n$. Diremos que su comportamiento dinámico estará dado por $ X_n = f_n(X_{n-1},V_{n-1})$. Acá cada $f_n$ es una función $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{R}$ que no necesariamente será lineal, y $(V_n)_{n\in\mathhnn{N}}$ son realizaciones independientes de una v.a. que modela ruido. 
 
-$$ X_n = f_n(X_{n-1},V_{n-1})$$
-
-Acá cada $f_n$ es una función $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{R}$ que no necesariamente será lineal, y $(V_n)_{n\in\mathhnn{N}}$ son realizaciones independientes de una v.a. que modela ruido. Normalmente no tendremos acceso a los valores reales de $X$, pero si podremos hacer observaciones, lo cual nos genera una sucesión $Y$. La naturaleza de tal observaciones estarán dadas por la expresión siguiente:
-
-$$ Y_n = h_n(X_n,W_n)$$
-
-Nuevamente los $h_n$ serán funciones $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{R}$ (posiblemente) no lineales y $W$ será una sucesión aleatoria i.i.d. que modela el ruido. Para llevar a cabo las estimaciones de manera secuencial, tomaremos la probabilidad de ocurrencia de los valores de manera Bayesiana.  % :
+\newp Normalmente no tendremos acceso a los valores reales de $X$, pero si podremos hacer observaciones, lo cual nos genera una sucesión $Y$. La naturaleza de tal observaciones estarán dadas por la expresión  $ Y_n = h_n(X_n,W_n)$. Nuevamente los $h_n$ serán funciones $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{R}$ (posiblemente) no lineales y $W$ será una sucesión aleatoria i.i.d. que modela el ruido. % Para llevar a cabo las estimaciones de manera secuencial, tomaremos la probabilidad de ocurrencia de los valores de manera Bayesiana.  % :
 
 % \begin{enumerate}
 %     \item \textbf{Predicción}: Primero computamos la probabilidad del estado siguiente dadas las observaciones hasta el tiempo anterior usando probabilidades totales.
@@ -84,39 +78,35 @@ Nuevamente los $h_n$ serán funciones $\mathbb{R}\times\mathbb{R}\mapsto\mathbb{
 % \end{enumerate}
 
 \section{Filtro de Kalman}
-Primero consideremos $f,h,V$ y $W$ como sigue:
-$$ f(X_n) = A X_{n-1} + B V_n ,\hspace{.5cm} h_n(X_n) = C X_n + DW_n$$
-lo cual corresponde a un modelo lineal, pues $A,B,C,D$ son constantes. Además tanto $V$ como $W$ son sucesiones de ruido Gaussiano $\mathcal{N}(0,1)$. Consideramos estos datos como inout para nuestro modelo, que evolucionará en dos etapas:
+Primero consideremos $f$ como $ f(X_n) = A X_{n-1} + B V_n$ y $h$ como $ h_n(X_n) = C X_n + DW_n$, lo cual corresponde a un modelo lineal, pues $A,B,C,D$ son constantes. Además tanto $V$ como $W$ son sucesiones de ruido Gaussiano $\mathcal{N}(0,1)$. Consideramos estos datos como input para nuestro modelo, que evolucionará en dos etapas:
 \begin{enumerate}
     \item \textbf{Predicción}: primeramente se computan las predicciones a priori tanto de $X_n$ como de la varianza, que denotamos $P_n$.
     $$ \hat X_{n|n-1} = A \hat X_{n-1},\hspace{.5cm} P_{n|n-1} = A^2 P_{n-1|n-1} + Q$$
     donde $Q$ es la varianza del ruido en la ecuación de estado. Notemos que en este caso, esto es igual a $B$, pues hemos definido ruidos normales estándar.
-    \item \textbf{Actualización}: una vez que la medición se vuelve disponible, podemos incorporarla en nuestra estimación. Esto se hace usando un valor que llamaremos la ganancia de Kalman. Este parámetro nos dice cuanto priorizar la medición versus nuestro estimado usando la confianza en las medidiciones, y estará dada por:
-    $$ K_n = \dots$$
+    \item \textbf{Actualización}: una vez que la medición se vuelve disponible, podemos incorporarla en nuestra estimación. Esto se hace usando un valor que llamaremos la ganancia de Kalman. Este parámetro nos dice cuanto priorizar la medición versus nuestro estimado usando la confianza en las mediciones, y estará dada por:
+    $$ K_n = \frac{P_{n|n-1}}{(P_{n|n-1}+\sigma^2)},\hspace{.5cm} \hat X_{n|n}=\hat X_{n|n-1}+K_n(Y_n-AX_{n|n-1}),\hspace{.5cm} P_{n|n}=(1-K_n)P_{n|n-1}$$
 \end{enumerate}
 
-\newp Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obteniendo los siguientes valores:
+Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obteniendo los siguientes valores y series como muestra la figura \ref{img:series_x_y}:
 
 \begin{table}
-\begin{tabular}{|c|l|}
+\begin{tabular}{|c|c|c|l|l|l|}
 \hline
-\textbf{parámetro}        & \multicolumn{1}{r|}{\textbf{valor}} \\ \hline
-A                         & \multicolumn{1}{r|}{0.5488}         \\ \hline
-B                         & \multicolumn{1}{r|}{1.0860}         \\ \hline
-\textbf{C}                & 0.6027                              \\ \hline
-\textbf{D}                & 0.5179                              \\ \hline
-\textbf{posición inicial} & 1.4940                              \\ \hline
+\textbf{parámetro}                   & \textbf{A}                  & \textbf{B}                  & \multicolumn{1}{c|}{\textbf{C}} & \multicolumn{1}{c|}{\textbf{C}} & \multicolumn{1}{c|}{\textbf{Posición inicial}} \\ \hline
+\multicolumn{1}{|r|}{\textbf{valor}} & \multicolumn{1}{r|}{0.5488} & \multicolumn{1}{r|}{1.0860} & 0.6027                          & 0.5179                          & 1.4940                                         \\ \hline
 \end{tabular}
 \end{table}
 
 % \insertimage[\label{img:serie_x}]{img/serie_x}{scale=0.5}{Serie $X$}
 % \insertimage[\label{img:serie_y}]{img/serie_y}{scale=0.5}{Serie $Y$}
-\insertimage[\label{img:series_x_y}]{img/series_x_y}{scale=0.5}{Serie original $X$ y mediciones $Y$.}
+\insertimage[\label{img:series_x_y}]{img/series_x_y}{scale=0.45}{Serie original $X$ y mediciones $Y$.}
 
-\lipsum[2]
+La implementación del filtro y su uso sobre la serie $Y$ se grafican en la figura \ref{img:x_pred_updt}. En ella, la serie original $X$ a aproximar se muestra con lineas azules, mientras que los valores que resultan de la aplicación del filtro de Kalman están en verde. Se vislumbra que hay una fuerte correlación entre ambas series. La aproximación se vuelve menos precisa en aquellos puntos de tiempo en los cuales hay saltos repentinos en $X$.
 
-\insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.5}{Serie X junto con las predicciones del filtro pre y post actualización}
+\insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.45}{Serie X junto con las predicciones del filtro pre y post actualización}
 % \insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
+
+Por otro lado, incluimos también la serie $X_{predicted}$ en naranjo, la cual representa los valores de $X_{n:n-1}$ para $n\in\{0,\dots,200\}$. Esto nos permite ver que tan alejada era la aproximación antes de la observación correspondiente, y confirmar que ponderar usando la ganancia de Kalman efectivamente acerca la predicción final (línea verde) a la serie original.
 
 \section{Filtro de Partículas}
 
