@@ -1,6 +1,7 @@
 clase_*/
 enunciado*.pdf
-unidad_1/Vetterli-Foundations_of_Signal_Processing.pdf
+*Vetterli-Foundations_of_Signal_Processing.pdf
 .ipynb_checkpoints/
 __pycache__
 unidad_1/tarea_1/tarea_1_filtro_kalman.ipynb
+unidad_1/clases 2-5/Stoica - Spectral analysis of signals.djvu
