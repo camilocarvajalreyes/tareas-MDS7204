@@ -18,6 +18,7 @@ class SequentialImportanceSampling:
         self.weights_sequence = []
         self._observed = []
         self._medias = []
+        self._params = None
 
     def update_weights(self,y_obs):
         last_weights = self.weights_sequence[-1]
@@ -72,6 +73,25 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         """
         self.particle_sequence.append(norm.rvs(mu,sigma,size=self.N))
         self.weights_sequence.append(np.ones(self.N)/self.N)
+    
+    def sv_params(self,params_dict):
+        """Recibe los parametros de un modelo de volatilidad estocástica de la forma:
+            Xn = alpha*Xn-1 + sigma Vn
+            Yn = beta*exp(Xn/2)*Wn
+        con Vn y Wn ruidos Gaussianos (normal estandar).
+
+        Arguments
+        ----------
+        
+            params_dict: dict
+                diccionario con llaves 'sigma', 'alpha', 'beta'
+        """
+        s_key = 'sigma' in params_dict.keys()
+        a_key = 'alpha' in params_dict.keys()
+        b_key = 'beta' in params_dict.keys()
+        if not s_key and a_key and b_key:
+            raise KeyError("'sigma', 'alpha', 'beta' expected as keys of the parameters dictionary")
+        self._params = params_dict
 
     @staticmethod
     def sample_gaussian(mu,sigma):
@@ -79,7 +99,10 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         return new_particle
 
     def sample_particles(self):
+        old_particles =  self.particle_sequence[-1]
+        new_particles = []
+        for part in old_particles:
+            mu = part * self._params['alpha']
+            new_particles.append(norm.rvs(mu,self.sigma))
 
-        new_particles = None
-
-        self.particle_sequence.append(new_particles)
+        self.particle_sequence.append(np.array(new_particles))
