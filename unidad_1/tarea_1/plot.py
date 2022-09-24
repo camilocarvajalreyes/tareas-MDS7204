@@ -1,7 +1,7 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=True):
+def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=True,title=None):
     """
     Plotea una (o varias) serie(s) de tiempo
 
@@ -33,10 +33,14 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
         for i in range(len(y_tag)):
             sns.lineplot(data=series[i], ax=ax, markers=['o','o','o'])
         ax.legend(y_tag)
-        ax.set(xlabel='tiempo',ylabel='valor',title='Realizaciones de series')
+        if title is None:
+            title = 'Realizaciones de series'
+        ax.set(xlabel='tiempo',ylabel='valor',title=title)
     else:
         sns.lineplot(data=series, ax=ax, markers=['o','o','o'], color=colour)
-        ax.set(xlabel='tiempo',ylabel='valor de '+y_tag,title='Realizaciones de la serie {}'.format(y_tag))
+        if title is None:
+            title = 'Realizaciones de la serie {}'.format(y_tag)
+        ax.set(xlabel='tiempo',ylabel='valor de '+y_tag,title=title)
     if display:
         plt.show()
     if save:
