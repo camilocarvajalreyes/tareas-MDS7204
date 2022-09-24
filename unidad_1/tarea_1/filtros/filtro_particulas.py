@@ -26,6 +26,7 @@ class ParticleFilter1D:
         self._observed = []
         self._medias = []
         self._params = None
+        print("Filtro de partículas {} resampleo inicializado con N = {}".format('con' if self.resample else 'sin',self.N))
 
     def observe(self,y_obs):
         "Observa una realización de la variable observable Y"
@@ -47,7 +48,7 @@ class ParticleFilter1D:
     def step(self):
         "Método que lleva a cabo un paso del algoritmo"
         self.sample_particles()
-        self.update_weights(self._observed[-1])
+        self.update_weights()
         if self.resample:
             self.resampling()
         self._medias.append(np.average(self.particle_sequence[-1],weights=self.weights_sequence[-1]))
@@ -77,6 +78,7 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
 
         """
         self.particle_sequence.append(norm.rvs(mu,sigma,size=self.N))
+        self._medias.append(np.average(self.particle_sequence[-1]))
     
     def sv_params(self,params_dict):
         """Recibe los parametros de un modelo de volatilidad estocástica de la forma:
@@ -110,13 +112,12 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         new_particles = []
         for part in old_particles:
             mu = part * self._params['alpha'] + self._params['nu']
-            new_particles.append(norm.rvs(mu,self.sigma**2))
+            new_particles.append(norm.rvs(mu,self._params['sigma']**2))
 
         self.particle_sequence.append(np.array(new_particles))
 
-    def update_weights(self,y_obs):
+    def update_weights(self):
         last_weights = self.weights_sequence[-1]
-        assert y_obs.shape[0] == last_weights.shape[0]
         sum_w, new_weights = 0, []
         for i, w in enumerate(last_weights):
             particula = self.particle_sequence[-1][i]

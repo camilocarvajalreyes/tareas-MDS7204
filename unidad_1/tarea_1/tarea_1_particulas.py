@@ -41,3 +41,46 @@ else:
     # plot_series(Y,'Y','tab:orange',display=display_plots)
 
 # Filtro de partículas
+N = 1000
+filter = ParticleFilter1DStochasticVolatility(N,resample=False)
+
+""" Parametros Stochastic Volatily
+Xn = alpha*Xn-1 + sigma^2 Vn + nu
+            Yn = beta*exp(Xn/gamma)*Wn
+        con Vn y Wn ruidos Gaussianos (normal estandar)."""
+SV_params = {
+    'sigma' : SIGMA,
+    'alpha' : ALPHA,
+    'beta' : BETA,
+    'gamma' : 2,
+    'nu' : 0
+}
+filter.sv_params(SV_params)
+
+# sampleo de particulas iniciales}
+filter.set_initial_particles(0,(SIGMA**2)/(1-(ALPHA**2)))
+
+# aplicación manual de las primeras iteraciones
+# estos pasos están implementados en el método .step()
+filter.observe(Y[0])
+filter.sample_particles()
+filter.update_weights()
+filter._medias.append(np.average(filter.particle_sequence[-1],weights=filter.weights_sequence[-1]))
+
+# iterando sobre todas las observaciones
+
+for i in range(2,n_samples):
+    filter.observe(Y[i])
+    # actualizacion
+    filter.step()
+    if (i+1) % 100  == 0:
+        print("Aprendizaje en linea {}%".format((i+1)/5))
+print("Aprendizaje en linea terminado")
+
+# Visualización
+X_pred = filter.medias
+titulo = 'Filtro de particulas para SV'
+if save_plots:
+    plot_series([X,X_pred],['X','X predicted'],save='particle_SIS.png',folder=img_dir,display=display_plots,title=titulo)
+else:
+    plot_series([X,X_pred],['X','X predicted'],display=display_plots,title=titulo)
