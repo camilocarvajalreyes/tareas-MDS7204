@@ -1,51 +1,56 @@
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm, rv_discrete
 
 
-class SequentialImportanceSampling:
-    def __init__(self,N):
-        """Inicialización de la clase
+class ParticleFilter1D:
+    def __init__(self,N,resample=True):
+        """Inicialización de la clase de un Filtro de una dimensión genérico
+            Incluye los métodos observar, paso y resampling
+            Los métodos específicos del modelo deben ser implementados: sample_particles y update_weights
         
         Argumentos
         ----------
                 
             N: int
                 numero de particulas por paso
+
+            resample: bool
+                si se implementa SIR en vez de SIS
                 
         """
         self.N = N
+        self.resample = resample
         self.particle_sequence = []
         self.weights_sequence = []
+        self.weights_sequence.append(np.ones(self.N)/self.N)
         self._observed = []
         self._medias = []
         self._params = None
 
-    def update_weights(self,y_obs):
-        last_weights = self.weights_sequence[-1]
-        assert y_obs.shape[0] == last_weights.shape[0]
-        sum_w, new_weights = 0, []
-        for i, w in enumerate(last_weights):
-            particula = self.particle_sequence[-1][i]
-            new_w = w * np.exp(-0.5*(np.exp(-1*particula)*y_obs[i]**2 + particula))
-            sum_w += new_w
-            new_weights.append(new_w)
-        new_weights_norm = np.array([w/sum_w for w in new_weights])
-        self.weights_sequence.append(new_weights_norm)
-    
-    def sample_particles(self):
-        raise NotImplementedError
-
-
-class ParticleFilter1D(SequentialImportanceSampling):
     def observe(self,y_obs):
         "Observa una realización de la variable observable Y"
         self._observed.append(y_obs)
 
-    def iterar(self):
+    def sample_particles(self):
+        raise NotImplementedError
+
+    def update_weights(self):
+        raise NotImplementedError
+
+    def resampling(self):
+        diracs = self.particle_sequence.pop()
+        weights = self.weights_sequence.pop()
+        ind_particles = rv_discrete(values=(np.arange(self.N,weights))).rvs(size=self.N)
+        new_particles = diracs[ind_particles]
+        self.particle_sequence.append(new_particles)
+
+    def step(self):
         "Método que lleva a cabo un paso del algoritmo"
-        particulas = self.sample_particles()
-        pesos = self.update_weights(self._observed[-1])
-        self._medias.append(np.average(particulas,weights=pesos))
+        self.sample_particles()
+        self.update_weights(self._observed[-1])
+        if self.resample:
+            self.resampling()
+        self._medias.append(np.average(self.particle_sequence[-1],weights=self.weights_sequence[-1]))
     
     # métodos getter
     @property
@@ -72,7 +77,6 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
 
         """
         self.particle_sequence.append(norm.rvs(mu,sigma,size=self.N))
-        self.weights_sequence.append(np.ones(self.N)/self.N)
     
     def sv_params(self,params_dict):
         """Recibe los parametros de un modelo de volatilidad estocástica de la forma:
@@ -106,3 +110,16 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
             new_particles.append(norm.rvs(mu,self.sigma))
 
         self.particle_sequence.append(np.array(new_particles))
+
+    def update_weights(self,y_obs):
+        last_weights = self.weights_sequence[-1]
+        assert y_obs.shape[0] == last_weights.shape[0]
+        sum_w, new_weights = 0, []
+        for i, w in enumerate(last_weights):
+            particula = self.particle_sequence[-1][i]
+            # correct here
+            new_w = w * np.exp(-0.5*(np.exp(-1*particula)*y_obs[i]**2 + particula))
+            sum_w += new_w
+            new_weights.append(new_w)
+        new_weights_norm = np.array([w/sum_w for w in new_weights])
+        self.weights_sequence.append(new_weights_norm)
