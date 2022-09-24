@@ -41,7 +41,7 @@ class ParticleFilter1D:
     def resampling(self):
         diracs = self.particle_sequence.pop()
         weights = self.weights_sequence.pop()
-        ind_particles = rv_discrete(values=(np.arange(self.N,weights))).rvs(size=self.N)
+        ind_particles = rv_discrete(values=(np.arange(self.N),weights)).rvs(size=self.N)
         new_particles = diracs[ind_particles]
         self.particle_sequence.append(new_particles)
 
