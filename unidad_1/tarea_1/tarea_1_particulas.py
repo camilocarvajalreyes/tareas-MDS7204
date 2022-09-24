@@ -2,6 +2,21 @@ from filtros.filtro_particulas import ParticleFilter1DStochasticVolatility
 from plot import plot_series
 import numpy as np
 
+import time
+import math
+
+def timeSince(since):
+    now = time.time()
+    s = now - since
+    m = math.floor(s/60)
+    s -= m*60
+    if m < 60:
+        return '%dm %ds' % (m, s)
+    else:
+        h = math.floor(m/60)
+        m -= h*60
+        return '%dh %dm %ds' % (h, m, s)
+
 # parámetros de este código
 np.random.seed(0)
 save_plots = False  # si guardar o no las figuras
@@ -44,6 +59,8 @@ else:
 N = 1000
 filter = ParticleFilter1DStochasticVolatility(N,resample=False)
 
+start_SIS = time.time()
+
 """ Parametros Stochastic Volatily
 Xn = alpha*Xn-1 + sigma^2 Vn + nu
             Yn = beta*exp(Xn/gamma)*Wn
@@ -74,13 +91,16 @@ for i in range(2,n_samples):
     # actualizacion
     filter.step()
     if (i+1) % 100  == 0:
-        print("Aprendizaje en linea {}%".format((i+1)/5))
-print("Aprendizaje en linea terminado")
+        print("Aprendizaje en linea {}%, transcurridos {}".format((i+1)/5,timeSince(start_SIS)))
+print("Aprendizaje en linea terminado luego de {}".format(timeSince(start_SIS)))
+
+X_pred_SIS = filter.medias
+mse_SIS = ((X - X_pred_SIS)**2).mean()
+print("Error cuadrático medio = {}".format(mse_SIS))
 
 # Visualización
-X_pred = filter.medias
 titulo = 'Filtro de particulas para SV'
 if save_plots:
-    plot_series([X,X_pred],['X','X predicted'],save='particle_SIS.png',folder=img_dir,display=display_plots,title=titulo)
+    plot_series([X,X_pred_SIS],['X','X predicted'],save='particle_SIS.png',folder=img_dir,display=display_plots,title=titulo)
 else:
-    plot_series([X,X_pred],['X','X predicted'],display=display_plots,title=titulo)
+    plot_series([X,X_pred_SIS],['X','X predicted'],display=display_plots,title=titulo)
