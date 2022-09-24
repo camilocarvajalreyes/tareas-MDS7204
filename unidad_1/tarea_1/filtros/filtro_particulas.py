@@ -80,21 +80,24 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
     
     def sv_params(self,params_dict):
         """Recibe los parametros de un modelo de volatilidad estocástica de la forma:
-            Xn = alpha*Xn-1 + sigma Vn
-            Yn = beta*exp(Xn/2)*Wn
+            Xn = alpha*Xn-1 + sigma^2 Vn + nu
+            Yn = beta*exp(Xn/gamma)*Wn
         con Vn y Wn ruidos Gaussianos (normal estandar).
 
         Arguments
         ----------
         
             params_dict: dict
-                diccionario con llaves 'sigma', 'alpha', 'beta'
+                diccionario con llaves 'sigma', 'alpha', 'beta', 'gamma', 'nu
+        
         """
         s_key = 'sigma' in params_dict.keys()
         a_key = 'alpha' in params_dict.keys()
         b_key = 'beta' in params_dict.keys()
-        if not s_key and a_key and b_key:
-            raise KeyError("'sigma', 'alpha', 'beta' expected as keys of the parameters dictionary")
+        g_key = 'gamma' in params_dict.keys()
+        v_key = 'nu' in params_dict.keys()
+        if not s_key and a_key and b_key and g_key and v_key:
+            raise KeyError("'sigma', 'alpha', 'beta', 'gamma' and 'nu expected as keys of the parameters dictionary")
         self._params = params_dict
 
     @staticmethod
@@ -106,8 +109,8 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         old_particles =  self.particle_sequence[-1]
         new_particles = []
         for part in old_particles:
-            mu = part * self._params['alpha']
-            new_particles.append(norm.rvs(mu,self.sigma))
+            mu = part * self._params['alpha'] + self._params['nu']
+            new_particles.append(norm.rvs(mu,self.sigma**2))
 
         self.particle_sequence.append(np.array(new_particles))
 
@@ -117,8 +120,8 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         sum_w, new_weights = 0, []
         for i, w in enumerate(last_weights):
             particula = self.particle_sequence[-1][i]
-            # correct here
-            new_w = w * np.exp(-0.5*(np.exp(-1*particula)*y_obs[i]**2 + particula))
+            var = self._params['beta'] * np.exp(particula/self._params['gamma'])
+            new_w = w * norm.pdf(self._observed[-1],scale=var)
             sum_w += new_w
             new_weights.append(new_w)
         new_weights_norm = np.array([w/sum_w for w in new_weights])
