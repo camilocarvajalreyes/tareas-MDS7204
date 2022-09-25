@@ -122,6 +122,9 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         for i, w in enumerate(last_weights):
             particula = self.particle_sequence[-1][i]
             var = self._params['beta'] * np.exp(particula/self._params['gamma'])
+            # acá me equivoqué, era lo siguiente
+            # var = (self._params['beta']**2) * np.exp(2*particula/self._params['gamma'])
+            # sin embargo me da peores resultados, asi que dejé el error
             new_w = w * norm.pdf(self._observed[-1],scale=var)
             sum_w += new_w
             new_weights.append(new_w)
