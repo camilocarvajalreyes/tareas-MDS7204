@@ -1,5 +1,8 @@
+from typing import Type
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=True,title=None):
     """
@@ -41,6 +44,25 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
         if title is None:
             title = 'Realizaciones de la serie {}'.format(y_tag)
         ax.set(xlabel='tiempo',ylabel='valor de '+y_tag,title=title)
+    if display:
+        plt.show()
+    if save:
+        path = folder+ '/' + save
+        plt.savefig(path)
+
+
+def plot_heatmaps(arrs,x_axis, y_axis,title,display=True,save=False,folder=None):
+    fig, ax = plt.subplots(ncols=len(arrs),figsize=(8,5))
+    max_value = np.max([np.max(arr) for arr in arrs])
+    for i, arr in enumerate(arrs):
+        try:
+            ax_plt=ax[i]
+        except TypeError:
+            ax_plt = ax
+        sns.heatmap(arr, vmax=max_value, xticklabels=x_axis,yticklabels=y_axis, ax=ax_plt)
+        ax_plt.set(xlabel='varianza de W (proceso)')
+        ax_plt.set(ylabel='varianza de V (mediciones)')
+    plt.title(title)
     if display:
         plt.show()
     if save:
