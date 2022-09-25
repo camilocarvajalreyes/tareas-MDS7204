@@ -112,7 +112,7 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         new_particles = []
         for part in old_particles:
             mu = part * self._params['alpha'] + self._params['nu']
-            new_particles.append(norm.rvs(mu,self._params['sigma']**2))
+            new_particles.append(norm.rvs(mu,self._params['sigma']))
 
         self.particle_sequence.append(np.array(new_particles))
 
@@ -121,11 +121,8 @@ class ParticleFilter1DStochasticVolatility(ParticleFilter1D):
         sum_w, new_weights = 0, []
         for i, w in enumerate(last_weights):
             particula = self.particle_sequence[-1][i]
-            var = self._params['beta'] * np.exp(particula/self._params['gamma'])
-            # acá me equivoqué, era lo siguiente
-            # var = (self._params['beta']**2) * np.exp(2*particula/self._params['gamma'])
-            # sin embargo me da peores resultados, asi que dejé el error
-            new_w = w * norm.pdf(self._observed[-1],scale=var)
+            sd = self._params['beta'] * np.exp(particula/self._params['gamma'])
+            new_w = w * norm.pdf(self._observed[-1],scale=sd)
             sum_w += new_w
             new_weights.append(new_w)
         new_weights_norm = np.array([w/sum_w for w in new_weights])
