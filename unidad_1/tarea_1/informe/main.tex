@@ -63,7 +63,7 @@
 % 	\lipsum[11]
 % \end{abstract}
 
-\iffalse
+% \iffalse
 
 \section{Introducción}
 El presente informe aborda las implementaciones de dos métodos de predicción en series de tiempo: el filtro de Kalman y el filtro de partículas. Ambos integran un conjunto de métodos predictivos secuenciales cuya naturaleza general abordaremos a continuación para el caso unidimensional.
@@ -79,11 +79,11 @@ El presente informe aborda las implementaciones de dos métodos de predicción e
     $$ p(X_n|Y_{1:n}) = \frac{p(Y_n|X_{n})p(X_n|Y_{1:n-1})}{p(Y_n|Y_{1:n-1})}$$
 \end{enumerate}
 
-\fi
+% \fi
 
 \section{Filtro de Kalman}
 
-\iffalse 
+% \iffalse 
 Primero consideremos $f$ como $ f(X_n) = A X_{n-1} + B V_n$ y $h$ como $ h_n(X_n) = C X_n + DW_n$, lo cual corresponde a un modelo lineal, pues $A,B,C,D$ son constantes. Además tanto $V$ como $W$ son sucesiones de ruido Gaussiano $\mathcal{N}(0,1)$. Consideramos estos datos como input para nuestro modelo, que evolucionará en dos etapas:
 \begin{enumerate}
     \item \textbf{Predicción}: primeramente se computan las predicciones a priori tanto de $X_n$ como de la varianza, que denotamos $P_n$.
@@ -93,7 +93,7 @@ Primero consideremos $f$ como $ f(X_n) = A X_{n-1} + B V_n$ y $h$ como $ h_n(X_n
     $$ K_n = \frac{P_{n|n-1}}{(P_{n|n-1}+\sigma^2)},\hspace{.5cm} \hat X_{n|n}=\hat X_{n|n-1}+K_n(Y_n-AX_{n|n-1}),\hspace{.5cm} P_{n|n}=(1-K_n)P_{n|n-1}$$
 \end{enumerate}
 
-\fi
+% \fi
 
 Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obteniendo los siguientes valores y series como muestra la figura \ref{img:series_x_y}:
 
@@ -111,7 +111,7 @@ Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obte
 
 La implementación del filtro y su uso sobre la serie $Y$ se grafican en la figura \ref{img:x_pred_updt}. En ella, la serie original $X$ a aproximar se muestra con lineas azules, mientras que los valores que resultan de la aplicación del filtro de Kalman están en verde. Se vislumbra que hay una fuerte correlación entre ambas series. La aproximación se vuelve menos precisa en aquellos puntos de tiempo en los cuales hay saltos repentinos en $X$.
 
-Por otro lado, incluimos también la serie $X_{predicted}$ en naranjo, la cual representa los valores de $X_{n:n-1}$ para $n\in\{0,\dots,200\}$. Esto nos permite ver que tan alejada era la aproximación antes de la observación correspondiente, y confirmar que ponderar usando la ganancia de Kalman efectivamente acerca la predicción final (línea verde) a la serie original.
+Por otro lado, incluimos también la serie $X_{predicted}$ (en \color{orange}naranjo\color{black}), la cual representa los valores de las predicciones a priori $X_{n:n-1}$ para $n\in\{0,\dots,200\}$. Esto nos permite ver que tan alejada era la aproximación antes de la observación correspondiente. Es claro que la serie luego de la actualización de Kalman (\color{green}verde\color{black}) aproxima de mejor modo $X$ (\color{blue}azul\color{black}), con lo cual podemos confirmar que ponderar usando la ganancia de Kalman efectivamente acerca la predicción final a la serie original.
 
 \insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.55}{Serie X junto con las predicciones del filtro pre y post actualización}
 % \insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
