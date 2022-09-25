@@ -4,9 +4,9 @@ from filtros.filtro_kalman import KalmanFilter1D
 
 # parámetros de este código
 np.random.seed(0)
-save_plots = False  # si guardar o no las figuras
+save_plots = True  # si guardar o no las figuras
 img_dir = "unidad_1/tarea_1/informe/img"  # directorio en caso de guardar las figuras
-display_plots = True  # si se muestran o no las figuras (pop-up), no funciona al mismo tiempo que save_plots
+display_plots = False  # si se muestran o no las figuras (pop-up), no funciona al mismo tiempo que save_plots
 
 # Simulación de las series
 

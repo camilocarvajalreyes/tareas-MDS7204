@@ -1,13 +1,13 @@
 import numpy as np
 
 class KalmanFilter1D:
-    def __init__(self,x0,P0,F_model,Q_model,H_model,sigma):
+    def __init__(self,y0,P0,F_model,Q_model,H_model,sigma):
         """Inicializa la clase con listas vacías de observación, predicción y corrección
         
         Argumentos
         ----------
         
-            x0: float
+            y0: float
                 estado inicial
                 
             P0: float
@@ -26,10 +26,10 @@ class KalmanFilter1D:
                 varianza del ruido de medición
         
         """
-        self._x_observed = [x0]
+        self._x_observed = [y0]
         # self.x_true = []
-        self._x_predicted = []
-        self._x_updated = []
+        self._x_predicted = [y0]
+        self._x_updated = [y0]
 
         self._variances_predicted = []
         self._variances_updated = [P0]
