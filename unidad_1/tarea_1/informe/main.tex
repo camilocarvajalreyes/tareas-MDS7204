@@ -63,7 +63,7 @@
 % 	\lipsum[11]
 % \end{abstract}
 
-% \iffalse
+\iffalse
 
 \section{Introducción}
 El presente informe aborda las implementaciones de dos métodos de predicción en series de tiempo: el filtro de Kalman y el filtro de partículas. Ambos integran un conjunto de métodos predictivos secuenciales cuya naturaleza general abordaremos a continuación para el caso unidimensional.
@@ -79,11 +79,11 @@ El presente informe aborda las implementaciones de dos métodos de predicción e
     $$ p(X_n|Y_{1:n}) = \frac{p(Y_n|X_{n})p(X_n|Y_{1:n-1})}{p(Y_n|Y_{1:n-1})}$$
 \end{enumerate}
 
-% \fi
+\fi
 
 \section{Filtro de Kalman}
 
-% \iffalse 
+\iffalse 
 Primero consideremos $f$ como $ f(X_n) = A X_{n-1} + B V_n$ y $h$ como $ h_n(X_n) = C X_n + DW_n$, lo cual corresponde a un modelo lineal, pues $A,B,C,D$ son constantes. Además tanto $V$ como $W$ son sucesiones de ruido Gaussiano $\mathcal{N}(0,1)$. Consideramos estos datos como input para nuestro modelo, que evolucionará en dos etapas:
 \begin{enumerate}
     \item \textbf{Predicción}: primeramente se computan las predicciones a priori tanto de $X_n$ como de la varianza, que denotamos $P_n$.
@@ -93,7 +93,7 @@ Primero consideremos $f$ como $ f(X_n) = A X_{n-1} + B V_n$ y $h$ como $ h_n(X_n
     $$ K_n = \frac{P_{n|n-1}}{(P_{n|n-1}+\sigma^2)},\hspace{.5cm} \hat X_{n|n}=\hat X_{n|n-1}+K_n(Y_n-AX_{n|n-1}),\hspace{.5cm} P_{n|n}=(1-K_n)P_{n|n-1}$$
 \end{enumerate}
 
-% \fi
+\fi
 
 Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obteniendo los siguientes valores y series como muestra la figura \ref{img:series_x_y}:
 
@@ -107,28 +107,31 @@ Sampleamos los valores de las constantes incluyendo el estado inicial $X_0$ obte
 
 % \insertimage[\label{img:serie_x}]{img/serie_x}{scale=0.5}{Serie $X$}
 % \insertimage[\label{img:serie_y}]{img/serie_y}{scale=0.5}{Serie $Y$}
-\insertimage[\label{img:series_x_y}]{img/series_x_y}{scale=0.55}{Serie original $X$ y mediciones $Y$.}
+\insertimage[\label{img:series_x_y}]{img/series_x_y}{scale=0.48}{Serie original $X$ y mediciones $Y$.}
 
+\insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.48}{Serie X junto con las predicciones del filtro pre y post actualización}
+% \insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
+
+\insertimagerightline[\label{img:variance_heatmap}]{img/variance_heatmap}{0.52}{15}{MSE versus varianzas del modelo}
 La implementación del filtro y su uso sobre la serie $Y$ se grafican en la figura \ref{img:x_pred_updt}. En ella, la serie original $X$ a aproximar se muestra con lineas azules, mientras que los valores que resultan de la aplicación del filtro de Kalman están en verde. Se vislumbra que hay una fuerte correlación entre ambas series. La aproximación se vuelve menos precisa en aquellos puntos de tiempo en los cuales hay saltos repentinos en $X$.
 
-Por otro lado, incluimos también la serie $X_{predicted}$ (en \color{orange}naranjo\color{black}), la cual representa los valores de las predicciones a priori $X_{n:n-1}$ para $n\in\{0,\dots,200\}$. Esto nos permite ver que tan alejada era la aproximación antes de la observación correspondiente. Es claro que la serie luego de la actualización de Kalman (\color{green}verde\color{black}) aproxima de mejor modo $X$ (\color{blue}azul\color{black}), con lo cual podemos confirmar que ponderar usando la ganancia de Kalman efectivamente acerca la predicción final a la serie original.
+Por otro lado, incluimos también la serie $X_{predicted}$ (en \color{orange}naranjo\color{black}), la cual representa los valores de las predicciones a priori $X_{n:n-1}$ para $n\in\{0,\dots,200\}$. Esto nos permite ver que tan alejada era la aproximación antes de la observación correspondiente. Es claro que la serie luego de la actualización de Kalman (\color{green}verde\color{black}) aproxima de mejor modo $X$ (\color{blue}azul\color{black}), con lo cual podemos confirmar que ponderar usando la ganancia de Kalman efectivamente acerca la predicción final a la serie original. Para poder cuantificar la calidad de las predicciones usamos el error cuadrático medio (MSE), con lo cual obtenemos $0.457$. A modo de referencia, el error de la serie pre-actualización es de $1.329$.
 
-\insertimage[\label{img:x_pred_updt}]{img/x_x_updt_x_pred}{scale=0.55}{Serie X junto con las predicciones del filtro pre y post actualización}
-% \insertimage[\label{img:x_updt}]{img/x_x_updt}{scale=0.5}{Serie X junto con las predicciones del filtro}
+Finalmente, en la figura \ref{img:variance_heatmap} incluimos un mapa de calor que nos ayuda a entender el efecto de las varianzas del problema. Mientras más oscura la celda es mejor pues la predicción está más cerca de la serie original. Esto nos dice que es preferible tener baja varianza en las mediciones, lo cual es intuitivo. Matemáticamente, este valor influye en la confianza que podemos tener de las mediciones (mientras más bajo V, más alta la ganancia de Kalman). Por otro lado, una baja varianza en el proceso nos empeora los resultados. Esto se explica puesto a que tener una peor varianza del medidor que del proceso mismo resultará en mediciones consistentemente malas, con las cuales ningún filtro logrará predicciones adecuadas.
 
 \section{Filtro de Partículas}
 
 \lipsum[1]
 
-\insertimage[\label{img:series_x_y_SV}]{img/series_x_y_SV}{scale=0.55}{Serie original $X$ y mediciones $Y$ para el modelo Volatilidad Estocástica.}
+\insertimage[\label{img:series_x_y_SV}]{img/series_x_y_SV}{scale=0.48}{Serie original $X$ y mediciones $Y$ para el modelo Volatilidad Estocástica.}
 
 \lipsum[2]
 
-\insertimage[\label{img:particle_SIS}]{img/particle_SIS}{scale=0.55}{Serie X junto con las predicciones del filtro sin resampling}
+\insertimage[\label{img:particle_SIS}]{img/particle_SIS}{scale=0.48}{Serie X junto con las predicciones del filtro sin resampling}
 
 \lipsum[3]
 
-\insertimage[\label{img:particle_SIR}]{img/particle_SIR}{scale=0.55}{Serie X junto con las predicciones del filtro con resampling}
+\insertimage[\label{img:particle_SIR}]{img/particle_SIR}{scale=0.48}{Serie X junto con las predicciones del filtro con resampling}
 
 % FIN DEL DOCUMENTO
 \end{document}
