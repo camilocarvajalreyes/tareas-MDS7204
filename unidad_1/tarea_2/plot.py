@@ -51,16 +51,30 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
         plt.savefig(path)
 
 
-def plot_spectrum(frequencies,PSD,y_tag,log=False,colour='tab:blue',save=False,folder=None,display=True,title=None):
+def plot_spectrum(frequencies,PSD,y_tag,log=False,max_freq=None,colour='tab:blue',save=False,folder=None,display=True,title=None):
     sns.set_theme(style="whitegrid")
     _, ax = plt.subplots(figsize=(12,5))
-    if log:
-        ax.semilogy(frequencies,PSD,c=colour)
-    else:
-        ax.plot(frequencies,PSD,c=colour)
-    if title is None:
-        title = 'Espectro de la serie {}'.format(y_tag)
+    if isinstance(y_tag,list):
+        assert(len(PSD)==len(y_tag))
+        for i in range(len(y_tag)):
+            if log:
+                ax.semilogy(frequencies,PSD[i])
+            else:
+                ax.plot(frequencies,PSD[i])
+        ax.legend(y_tag)
+        if title is None:
+            title = 'Espectros de series'
         ax.set(xlabel='frecuencia',ylabel='potencia',title=title)
+    else:
+        if log:
+            ax.semilogy(frequencies,PSD,c=colour)
+        else:
+            ax.plot(frequencies,PSD,c=colour)
+        if title is None:
+            title = 'Espectro de la serie {}'.format(y_tag)
+            ax.set(xlabel='frecuencia',ylabel='potencia',title=title)
+    if max_freq is not None:
+        ax.set_xlim(left=0,right=max_freq)
     if display:
         plt.show()
     if save:
