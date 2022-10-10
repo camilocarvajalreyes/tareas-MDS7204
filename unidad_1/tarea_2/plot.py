@@ -80,3 +80,35 @@ def plot_spectrum(frequencies,PSD,y_tag,log=False,max_freq=None,colour='tab:blue
     if save:
         path = folder+ '/' + save
         plt.savefig(path)
+
+
+def plot_times(xvalues,times,y_tag,log=False,colour='tab:blue',save=False,folder=None,display=True,title=None,xlabel='tamaño N',mk=2):
+    sns.set_theme(style="whitegrid")
+    _, ax = plt.subplots(figsize=(12,5))
+    if isinstance(y_tag,list):
+        assert(len(times)==len(y_tag))
+        for i in range(len(y_tag)):
+            if log:
+                ax.semilogy(xvalues,times[i])
+            else:
+                if i<mk:
+                    ax.plot(xvalues,times[i])
+                else:
+                    ax.plot(xvalues,times[i], marker='.', linestyle=':')
+        ax.legend(y_tag)
+        if title is None:
+            title = 'Tiempos de ejecución'
+        ax.set(xlabel=xlabel,ylabel='tiempo (s)',title=title)
+    else:
+        if log:
+            ax.semilogy(xvalues,times,c=colour)
+        else:
+            ax.plot(xvalues,times,c=colour, marker='.', linestyle=':')
+        if title is None:
+            title = 'Tiempos de ejecución de {}'.format(y_tag)
+            ax.set(xlabel=xlabel,ylabel='tiempo (s)',title=title)
+    if display:
+        plt.show()
+    if save:
+        path = folder+ '/' + save
+        plt.savefig(path)
