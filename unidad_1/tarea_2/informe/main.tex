@@ -44,6 +44,18 @@
 % CONFIGURACIÓN INICIAL DEL DOCUMENTO
 \input{lib/cfg/init}
 
+\newtheoremstyle{break}%
+    {}{}%
+    {\itshape}{}%
+    {\bfseries}{}% % Note that final punctuation is omitted.
+    {\newline}
+    % {\thmname{#1}\thmnumber{ #2}\thmnote{ #3}}
+    {\thmname{#1}\thmnote{ #3}}
+
+\theoremstyle{break}
+\newtheorem{theorem}{Teorema}[subsection]
+\newtheorem{proposition}{Proposición}[subsection]
+
 % INICIO DE LAS PÁGINAS
 \begin{document}
 	
@@ -62,7 +74,34 @@
 
 % Ejemplo, se puede borrar
 \section{Definiciones de la Densidad Espectral de Potencia (PSD)}
-\lipsum[1]
+\begin{proposition}[: Identidad Útil]
+    $$\displaystyle \sum^N_{k=1}\sum^N_{l=1} f(k-l)=\sum^{N-1}_{\tau=-N+1}(N-|\tau|)f(\tau)$$
+\end{proposition}
+\begin{proof}
+    Probaremos esto por inducción. Para $N=2$ basta notar que
+    \begin{alignat*}{2}
+        \sum^N_{k=1}\sum^N_{l=1} f(k-l) & = 2f(0)+f(-1) + f(1) = \sum^1_{\tau=-1}(2-|\tau|)f(\tau) = \sum^{N-1}_{\tau=-N+1}(N-|\tau|)f(\tau)
+    \end{alignat*}
+    Luego para el paso inductivo usamos que
+    % \begin{alignat*}{2}
+    %     \sum^{N+1}_{k=1}\sum^{N+1}_{l=1} f(k-l) & = \sum^{N-1}_{\tau=-N+1}(N-|\tau|)f(\tau)+\sum^N_{k=1}f(k-N-1)+\sum^N_{l=1}f(N+1-l)+f(0) = % \sum^N_{\tau=-N}(N+1-|\tau|)f(\tau)
+    % \end{alignat*}
+    $$ \sum^{N+1}_{k=1}\sum^{N+1}_{l=1} f(k-l) & = \sum^{N-1}_{\tau=-N+1}(N-|\tau|)f(\tau)+\sum^N_{k=1}f(k-N-1)+\sum^N_{l=1}f(N+1-l)+f(0) = \sum^N_{\tau=-N}(N+1-|\tau|)f(\tau) $$
+    Donde en la primera igualdad usamos la hipótesis inductiva (para $N$), con lo cual concluimos para $N+1$.
+\end{proof}
+\begin{proposition}[: Definiciones equivalentes de PSD]
+    $$\displaystyle \sum_{k\in\mathbb{Z}}c(k)e^{-j\omega k}=\lim_{N\to\infty}\mathbb{E}(\frac{1}{N}|\sum^N_{k=1}x_ke^{-j\omega k}|^2)$$
+    Esto nos da la equivalencia de ambas como definiciones de Densidad Espectral de Potencia.
+\end{proposition}
+\begin{proof}
+    En efecto,
+    \begin{alignat*}{2}
+        \lim_{N\to\infty}\mathbb{E}(\frac{1}{N}|\sum^N_{k=1}x_ke^{-j\omega k}|^2) & = \lim_{N\to\infty}\frac{1}{N}\sum^N_{k=1}\sum^N_{l=1}\mathbb{E}(x_kx_l^*)e^{-j\omega k + j\omega l} \\
+        \color{gray}\text{(gracias a la identidad útil)}\color{black} & = \lim_{N\to\infty} \frac{1}{N}\sum^{N-1}_{\tau-N+1}(N-|\tau|)c(\tau)e^{-j\omega\tau} \hspace{.5cm} \color{gray}\text{(con $f(n)=c(n)e^{-j\omega n}$)} \color{black} \\
+        &  = \lim_{N\to\infty}(\sum^{N-1}_{\tau=-N+1}c(\tau)e^{-j\omega\tau}-\frac{1}{N}\sum^{N-1}_{\tau-N+1}|\tau|c(\tau)e^{-j\omega\tau}) = \displaystyle \sum_{k\in\mathbb{Z}}c(k)e^{-j\omega k}
+    \end{alignat*}
+    Para la última igualdad hemos asumido que $\displaystyle \frac{1}{N}\sum^N_{\tau-N}|\tau||r(\tau)|\to0$ cuando $N\to\infty$, que corresponde a asumir que la sucesión $(c(k))_{k\in\mathbb{N}$ decae con suficiente rapidez. Se concluye la equivalencia deseada.
+\end{proof}
 
 \newpage
 \section{Estimación espectral}
