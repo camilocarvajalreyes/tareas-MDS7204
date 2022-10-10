@@ -2,7 +2,7 @@ import numpy as np
 
 def DiscreteFourierTransform(x,k):
     N = x.shape[0]
-    Xk = np.sum([xn*(k*n*np.cos(2*np.pi/N)) for xn, n in enumerate(x)])
+    Xk = np.sum(x * np.exp(-2j * np.pi * k * np.arange(N)/N))
     return Xk
 
 
