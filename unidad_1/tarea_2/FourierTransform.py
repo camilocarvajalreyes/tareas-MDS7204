@@ -1,9 +1,11 @@
 import numpy as np
 
-def DiscreteFourierTransform(x,k):
+def DiscreteFourierTransform(x):
     N = x.shape[0]
-    Xk = np.sum(x * np.exp(-2j * np.pi * k * np.arange(N)/N))
-    return Xk
+    X = np.zeros_like(x)
+    for k in range(N):
+        X[k] = np.sum(x * np.exp(-2j * np.pi * k * np.arange(N)/N))
+    return X
 
 
 def FastFourierTransform(x):
@@ -19,27 +21,4 @@ def FastFourierTransform(x):
         X = np.concatenate(
             (X_par+np.exp(-2j*np.pi*np.arange(mitad)/ N)*X_impar,
             X_par+np.exp(-2j*np.pi*np.arange(mitad,N)/ N)*X_impar))
-        return X
-
-
-def FFT(x):
-    """
-    A recursive implementation of 
-    the 1D Cooley-Tukey FFT, the 
-    input should have a length of 
-    power of 2. 
-    """
-    N = len(x)
-    
-    if N == 1:
-        return x
-    else:
-        X_even = FFT(x[::2])
-        X_odd = FFT(x[1::2])
-        factor = \
-          np.exp(-2j*np.pi*np.arange(N)/ N)
-        
-        X = np.concatenate(\
-            [X_even+factor[:int(N/2)]*X_odd,
-             X_even+factor[int(N/2):]*X_odd])
         return X
