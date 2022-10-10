@@ -119,7 +119,19 @@
 
 \newpage
 \subsection{Complejidad empírica}
-\lipsum[5]
+En esta subsección comprobaremos la complejidad teórica que se obtuvo en la parte anterior. Se implementaron en \textit{python} ambos métodos mencionados.  % : \textbf{DFT} computando $X_k = \displaystyle \sum^{N-1}_{n=1}x_ne^{-j\frac{kn2\pi}{N}$ para cada $k\in\{1,\dots,N\}$; y \textbf{FFT} que realiza lo anterior pero teniendo en cuenta las simetrías de las transformadas.
+Primeramente se computan las transformadas con ambos métodos para las siguientes series: ``coseno'', que corresponde a una suma de cosenos: $\sum^5_{n=1}n\cos(n 2\cdot 10\cdot \pi t)$; ``coseno ruido'' que equivale a lo anterior con un ruido $\sim\mathcal{N}(0,0.5)$ en cada paso; y las series de pulso cardiaco $hr_1$ y $hr_2$ de preguntas anteriores.
+
+\newp Cronometramos la ejecución de ambos algoritmos truncando las series en tamaños multiplos de dos. En la figura \ref{img:complejidad_fft1} vemos los tiempos en cuestión con respecto al largo de las series. Además, ploteamos el promedio para $DFT$ y $FFT$. Como referencia, ploteamos también funciones $M_1 N^2$ y $M_2 N\log(N)$ para $M_1$ y $M_2$ constantes.
+
+\insertimage[\label{img:complejidad_fft1}]{img/complejidad_fft1}{scale=0.48}{Tiempo de ejecución de DFT Y FFT versus largo de input.}
+
+% \insertimagerightline[\label{img:complejidad_fft2}]{img/complejidad_fft2}{0.72}{15}{chao}
+
+Los resultados están dentro de lo esperado, pues se vislumbra claramente que el algoritmo $FFT$ disminuye el tiempo de computo. Para graficar de mejor forma que las complejidades reportadas corresponden a las teóricas graficamos las mismas funciones de referencia junto con los tiempos de ejecución para ``coseno ruido''. La figura \ref{img:complejidad_fft2} nos muestra la dominación asintótica de nuestras funciones de referencia. Con esto se tiene que existen en cada caso las constantes $M$ con las cuales podemos afirmar la pertenencia de ambas complejidades a las familias $O(N^2)$ y $O(N\log(N))$ para DFT y FFT respectivamente.
+
+\insertimage[\label{img:complejidad_fft2}]{img/complejidad_fft2}{scale=0.45}{Tiempo de ejecución de DFT Y FFT versus largo de input (en escala logarítmica).}
+
 
 % FIN DEL DOCUMENTO
 \end{document}
