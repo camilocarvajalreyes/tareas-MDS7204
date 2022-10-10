@@ -103,19 +103,49 @@
     Para la última igualdad hemos asumido que $\displaystyle \frac{1}{N}\sum^N_{\tau-N}|\tau||r(\tau)|\to0$ cuando $N\to\infty$, que corresponde a asumir que la sucesión $(c(k))_{k\in\mathbb{N}$ decae con suficiente rapidez. Se concluye la equivalencia deseada.
 \end{proof}
 
-\newpage
-\section{Estimación espectral}
-\subsection{Periodograma}
-\lipsum[2]
+% \newpage
+% \section{Estimación espectral}
+% \subsection{Periodograma}
+% \lipsum[2]
 
-\newpage
-\subsection{Método paramétrico: Lomb-Scargle}
-\lipsum[3]
+% \newpage
+% \subsection{Método paramétrico: Lomb-Scargle}
+% \lipsum[3]
 
 \newpage
 \section{Fast Fourier Transform}
 \subsection{Complejidad Teórica}
-\lipsum[4]
+La transformada de Fourier discreta convierte una serie de tiempo donde las observaciones están equiespaciadas a una secuencia del mismo largo equiespaciada en el dominio de las frecuencias, correspondiente a la transformada de Fourier a tiempo discreto. 
+
+En su caso general dada una serie de tiempo real $x_1,\dots,x_N$, la transformada de Fourier discreta está dada por $ X_k = \displaystyle \sum^{N-1}_{n=1}x_n e^{-j \frac{2\pi}{N} kn} \hspace{.5cm}\text{ para }k\in\{1,\dots,N\} $.
+Esto se traduce en el siguiente pseudocódigo.
+\begin{sourcecodep}[Pseudocódigo de DFT]{pseudocode}{}
+
+$X_0,\dots,X_N \leftarrow DFT(x_1,\dots,x_N)$
+    for $k = 0$ to $N$ do
+        $X_k =\displaystyle \sum^{N-1}_{n=1}x_n e^{-j \frac{2\pi}{N} kn}$
+    end for
+end if
+\end{sourcecodep}
+
+La complejidad de esto se calcula como sigue: tenemos un ciclo de largo $N$. Por otro lado, cada una de las sumas $X_k$ corresponden a $N$ evaluaciones. En conclusión, el algoritmo toma un tiempo del orden de $N^2$. Para series de tiempo largas, esto es muchísimo tiempo. Es por esto que Cooley y Tukey se proponen el siguiente algoritmo (llamado Fast Fourier Transform) para acelerar el cálculo de la transformada:
+\begin{sourcecodep}[Pseudocódigo de FFT]{pseudocode}{}
+
+$X_0,\dots,X_N \leftarrow FFT(x_1,\dots,x_N)$
+    if N = 1 then
+        $X_0 \leftarrow x_0$
+    else
+        $X^{par} \leftarrow FFT(\{x_n\in x:n \text{ es par }\})$
+        $X^{impar} \leftarrow FFT(\{x_n\in x:n \text{ es impar }\})$
+        for $k = 0$ to $N/2−1$ do
+            $X_0,\dots,X_{\frac{N}{2}−1} \leftarrow X^{par}_k+e^{-2\pi j k/N}X^{impar}_k$
+            $X_{\frac{N}{2}},\dots,X_N \leftarrow X^{par}_k+e^{-2\pi j (k+N/2)/N}X^{impar}_k$
+        end for
+    end if
+\end{sourcecodep}
+Notemos que gracias a la recursión, tenemos evaluaciones de costo $N$, sin embargo la profundidad es de largo $\log(N)$. Con esto, tenemos una complejidad en $O(N\log(N))$. Justifiquemos ahora por qué podemos emplear tal recursión. Primero notar que gracias a la estructura de la transformada, $X_{k+iN}=X_N\,\forall i\in\mathbb{Z}$. Entonces, en vez de hacer calculos redundantes, Cooley-Tukey divide la serie de manera iterativa para reducir el computo. Mas precisamente, aprovechamos que
+$$ X_k = \displaystyle \sum^{N-1}_{n=1}x_n e^{-j \frac{2\pi}{N} kn} = \sum^{\frac{N}{2}-1}_{m=1}x_{2m} e^{-j \frac{2\pi}{(N/2)} km}+e^{-i2\pik/N}\sum^{\frac{N}{2}-1}_{m=1}x_{2m+1} e^{-j \frac{2\pi}{(N/2)} km}$$
+Esto es lo que aprovecha el pseudocódigo y se aplica a las sub-series que generan las mismas divisiones.
 
 \newpage
 \subsection{Complejidad empírica}
