@@ -59,10 +59,10 @@ for i in range(15):
     FastFourierTransform(serie_cos_ruido2[:int(2**(i+1))])
     t_ruido2['fft'][i] = timeSince(t_init)
 
-labs2 = ['$M_1 N^2$','$M_2 N \log(N)$','coseno ruido dft', 'coseno ruido fft']
+labs2 = ['coseno ruido dft', 'coseno ruido fft', '$M_1 N^2$','$M_2 N \log(N)$']
 
 orden_n2 = np.array([(1/22048576)*(2**n)**2 for n in range(1,16)])
 orden_log = np.array([(1/360000)*(2**n)*np.log(2**n) for n in range(1,16)])
-tiempos2 = [orden_n2, orden_log, t_ruido2['dft'], t_ruido2['fft']]
+tiempos2 = [t_ruido2['dft'], t_ruido2['fft'], orden_n2, orden_log]
 
 plot_times(np.array([2**i for i in range(1,16)]),tiempos2,labs2,log=True,mk=4,save='complejidad_fft2.png',folder=img_dir,display=False)
