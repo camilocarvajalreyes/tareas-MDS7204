@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=True,title=None):
+def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(12,5)):
     """
     Plotea una (o varias) serie(s) de tiempo
 
@@ -30,7 +30,7 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
     
     """
     sns.set_theme(style="whitegrid")
-    _, ax = plt.subplots(figsize=(12,5))
+    _, ax = plt.subplots(figsize=fig_size)
     if isinstance(y_tag,list):
         assert(len(series)==len(y_tag))
         for i in range(len(y_tag)):
@@ -51,9 +51,9 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
         plt.savefig(path)
 
 
-def plot_spectrum(frequencies,PSD,y_tag,log=False,max_freq=None,colour='tab:blue',save=False,folder=None,display=True,title=None,ylabel='potencia'):
+def plot_spectrum(frequencies,PSD,y_tag,log=False,max_freq=None,colour='tab:blue',save=False,folder=None,display=True,title=None,ylabel='potencia',fig_size=(12,5)):
     sns.set_theme(style="whitegrid")
-    _, ax = plt.subplots(figsize=(12,5))
+    _, ax = plt.subplots(figsize=fig_size)
     if isinstance(y_tag,list):
         assert(len(PSD)==len(y_tag))
         for i in range(len(y_tag)):
