@@ -90,6 +90,7 @@
     Donde en la primera igualdad usamos la hipótesis inductiva (para $N$), con lo cual concluimos para $N+1$.
 \end{proof}
 \begin{proposition}[: Definiciones equivalentes de PSD]
+\label{prop:psd}
     $$\displaystyle \sum_{k\in\mathbb{Z}}c(k)e^{-j\omega k}=\lim_{N\to\infty}\mathbb{E}(\frac{1}{N}|\sum^N_{k=1}x_ke^{-j\omega k}|^2)$$
     Esto nos da la equivalencia de ambas como definiciones de Densidad Espectral de Potencia.
 \end{proposition}
@@ -103,10 +104,20 @@
     Para la última igualdad hemos asumido que $\displaystyle \frac{1}{N}\sum^N_{\tau-N}|\tau||r(\tau)|\to0$ cuando $N\to\infty$, que corresponde a asumir que la sucesión $(c(k))_{k\in\mathbb{N}$ decae con suficiente rapidez. Se concluye la equivalencia deseada.
 \end{proof}
 
-% \newpage
-% \section{Estimación espectral}
-% \subsection{Periodograma}
-% \lipsum[2]
+\newpage
+\section{Estimación espectral}
+\subsection{Periodograma}
+La estimación espectral tiene como objetivo la estimación de la función $S(x)$, que tiene como definición las expresiones de la proposición \ref{prop:psd}. A continuación analizaremos el método del periodograma, también conocido como el método de Welch, que correspondo a uno no-paramétrico. En palabras simples, el método toma el promedio de periodogramas a través de ``ventanas de tiempo'' para realizar la estimación. En efecto, el algoritmo divide la señal en distintos bloques, lo cual a la larga reduce el efecto del ruido asociado a las distintas señales.
+\begin{images}[\label{img:cos}]{Serie y densidad espectral de una seuma de cosenos}
+	\addimage{img/serie_cos}{width=7.5cm}{Serie $\sum^5_{n=1}n\cos(n \cdot 2\cdot 10\cdot \pi t)$}
+	\addimage{img/psd_cos}{width=7.5cm}{Densidad Espectral}
+\end{images}
+En la figura \ref{img:cos} observamos una serie de suma de cosenos ($\displaystyle \sum^5_{n=1}n\cos(n \cdot 2\cdot 10\cdot \pi t)$) con su correspondiente estimación espectral usando el método del periodograma de la biblioteca \textit{scipy.signal}. Como es de esperar, vemos los cinco peaks crecientes que representan los cosenos en cuestión. Por otro lado, en la figura \ref{img:hr} se observan dos series de pulsos sanguíneos y sus estimaciones espectrales.
+\begin{images}[\label{img:hr}]{Serie y densidad espectral para series de pulso sanguíneo}
+	\addimage{img/serie_hr}{width=7.9cm}{Serie}
+	\addimage{img/psd_hr}{width=7.9cm}{Densidad Espectral}
+\end{images}
+Al observar el espectro estimado, podemos intuir que el primer pulso (azul) tiene oscilaciones más pronunciadas, ya que tiene frecuencias con alta potencia. Esto se confirma al observar las series originales al lado izquierdo. En contraste, el segundo pulso tiene solo algunos peaks más leves en frecuencias bajas, lo cual se explica en la apariencia errática de su serie. Un cierto grado de conocimiento médico nos puede dar explicaciones del por qué de estas formas observadas.
 
 % \newpage
 % \subsection{Método paramétrico: Lomb-Scargle}
