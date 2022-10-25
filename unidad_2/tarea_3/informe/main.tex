@@ -1,0 +1,80 @@
+% Template:     Template Reporte LaTeX
+% Documento:    Archivo principal
+% Versión:      1.2.9 (22/04/2020)
+% Codificación: UTF-8
+%
+% Autor: Pablo Pizarro R.
+%        Facultad de Ciencias Físicas y Matemáticas
+%        Universidad de Chile
+%        pablo@ppizarror.com
+%
+% Sitio web:    [https://latex.ppizarror.com/reporte]
+% Licencia MIT: [https://opensource.org/licenses/MIT]
+
+% CREACIÓN DEL DOCUMENTO
+\documentclass[letterpaper,11pt,oneside]{article}
+
+% INFORMACIÓN DEL DOCUMENTO
+\def\titulodelreporte {\textbf{Tarea 3 - Procesos Gaussianos}}
+\def\temaatratar {Tarea 3}
+\def\fechadelreporte {\today}
+
+\def\autordeldocumento {Camilo Carvajal Reyes}
+\def\nombredelcurso {Aprendizaje de Máquinas Avanzado}
+\def\codigodelcurso {MDS7204}
+
+\def\nombreuniversidad {Universidad de Chile}
+\def\nombrefacultad {Facultad de Ciencias Físicas y Matemáticas}
+\def\departamentouniversidad {Departamento de Ingeniería Matemática}
+\def\imagendepartamento {departamentos/dim}
+\def\localizacionuniversidad {Santiago, Chile}
+
+% CONFIGURACIONES
+\input{lib/config}
+
+% IMPORTACIÓN DE LIBRERÍAS
+\input{lib/env/imports}
+
+% IMPORTACIÓN DE FUNCIONES Y ENTORNOS
+\input{lib/cmd/all}
+
+% IMPORTACIÓN DE ESTILOS
+\input{lib/style/all}
+
+% CONFIGURACIÓN INICIAL DEL DOCUMENTO
+\input{lib/cfg/init}
+
+\newtheoremstyle{break}%
+    {}{}%
+    {\itshape}{}%
+    {\bfseries}{}% % Note that final punctuation is omitted.
+    {\newline}
+    % {\thmname{#1}\thmnumber{ #2}\thmnote{ #3}}
+    {\thmname{#1}\thmnote{ #3}}
+
+\theoremstyle{break}
+\newtheorem{theorem}{Teorema}[subsection]
+\newtheorem{proposition}{Proposición}[subsection]
+
+% INICIO DE LAS PÁGINAS
+\begin{document}
+	
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\input{lib/cfg/page}
+
+% CONFIGURACIONES FINALES
+\input{lib/cfg/final}
+
+% ======================= INICIO DEL DOCUMENTO =======================
+
+% Título y nombre del autor
+\inserttitle
+
+% Resumen o Abstract
+
+% Ejemplo, se puede borrar
+\lipsum[1]
+
+
+% FIN DEL DOCUMENTO
+\end{document}
