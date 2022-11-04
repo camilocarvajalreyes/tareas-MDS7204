@@ -1,8 +1,9 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-def plot_series(series,y_tag,obs=None,obs_only=False,colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
+def plot_series(series,time,y_tag,obs=None,obs_only=False,colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
     """
     Plotea una (o varias) serie(s) de tiempo
 
@@ -10,6 +11,9 @@ def plot_series(series,y_tag,obs=None,obs_only=False,colour='tab:blue',save=Fals
     ----------
         series: numpy.array o list(numpy.array)
             secuencia de valores o lista con varias secuencias de valores
+        
+        time: numpy.array o list(numpy.array)
+            secuencia de valores o lista con tiempos de las realizaciones de serie
 
         obs: numpy.array o list(numpy.array)
             secuencia de indices de valores observados
@@ -36,18 +40,19 @@ def plot_series(series,y_tag,obs=None,obs_only=False,colour='tab:blue',save=Fals
         assert(len(series)==len(y_tag))
         for i in range(len(y_tag)):
             if not obs_only:
-                sns.lineplot(data=series[i], ax=ax, markers=['o','o','o'])
+                sns.lineplot(x=time[i],y=series[i], ax=ax, markers=['o','o','o'])
             if obs is not None:
-                sns.scatterplot(data=series[i][obs[i]], ax=ax)
+                sns.scatterplot(x=time[i][obs[i]],y=series[i][obs[i]], ax=ax)
         ax.legend(y_tag)
         if title is None:
             title = 'Realizaciones de series'
         ax.set(xlabel='tiempo',ylabel='valor',title=title)
     else:
+        assert(len(series)==len(time))
         if not obs_only:
-            sns.lineplot(data=series, ax=ax, markers=['o','o','o'], color=colour)
+            sns.lineplot(x=time,y=series, ax=ax, markers=['o','o','o'], color=colour)
         if obs is not None:
-            sns.scatterplot(x=obs,y=series[obs], ax=ax, color='tab:red')
+            sns.scatterplot(x=time[obs],y=series[obs], ax=ax, color='tab:red')
         if title is None:
             title = 'Realizaciones de la serie {}'.format(y_tag)
         ax.set(xlabel='tiempo',ylabel='valor de '+y_tag,title=title)
@@ -56,3 +61,39 @@ def plot_series(series,y_tag,obs=None,obs_only=False,colour='tab:blue',save=Fals
     if save:
         path = folder+ '/' + save
         plt.savefig(path)
+
+
+def plot_posterior(gp_obj, n_samples = 0, v_axis_lims = None):
+    if v_axis_lims == None:
+        v_axis_lims = np.max(np.abs(gp_obj.samples))
+
+    plt.figure(figsize=(9,3))
+    plt.plot(gp_obj.time,gp_obj.mean, 'b', label='posterior')
+
+    plt.plot(gp_obj.x,gp_obj.y, '.r', markersize = 8, label='data')
+    error_bars = 2 * np.sqrt((np.diag(gp_obj.cov)))
+    plt.fill_between(gp_obj.time, gp_obj.mean - error_bars, gp_obj.mean + error_bars, color='blue',alpha=0.1, label='95% error bars')
+    if n_samples > 0:
+        gp_obj.compute_posterior(where = gp_obj.time)
+        gp_obj.sample(how_many = n_samples)
+        plt.plot(gp_obj.time,gp_obj.samples,alpha = 0.7)
+    plt.title('Posterior')
+    plt.xlabel('time')
+    plt.legend(loc=1, ncol=3)
+    plt.xlim([min(gp_obj.time),max(gp_obj.time)])
+    plt.ylim([-v_axis_lims,v_axis_lims])
+    plt.tight_layout()
+
+
+def plot_data(gp_obj, fig_size=(18,5)):
+    plt.figure(figsize=fig_size)
+
+    plt.plot(gp_obj.x,gp_obj.y, '.r', markersize = 8,label='data')
+
+    plt.title('Posterior')
+    plt.xlabel('time')
+    plt.legend(loc=1)
+    plt.xlim([min(gp_obj.time),max(gp_obj.time)])
+    # plt.ylim([-v_axis_lims,v_axis_lims])
+    plt.tight_layout()
+    plt.show()

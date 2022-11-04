@@ -152,6 +152,7 @@ class gp_lite:
 		plt.xlim([min(self.time),max(self.time)])
 		plt.ylim([-v_axis_lims,v_axis_lims])
 		plt.tight_layout()
+		plt.show()
 
 	def plot_data(self, v_axis_lims = None):
 		if v_axis_lims == None:
@@ -167,3 +168,4 @@ class gp_lite:
 		plt.xlim([min(self.time),max(self.time)])
 		plt.ylim([-v_axis_lims,v_axis_lims])
 		plt.tight_layout()
+		plt.show()
