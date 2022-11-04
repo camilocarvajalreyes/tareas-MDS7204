@@ -1,10 +1,8 @@
-from typing import Type
 import seaborn as sns
 import matplotlib.pyplot as plt
-import numpy as np
 
 
-def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(12,5)):
+def plot_series(series,y_tag,obs=None,obs_only=False,colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
     """
     Plotea una (o varias) serie(s) de tiempo
 
@@ -13,6 +11,9 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
         series: numpy.array o list(numpy.array)
             secuencia de valores o lista con varias secuencias de valores
 
+        obs: numpy.array o list(numpy.array)
+            secuencia de indices de valores observados
+        
         y_tag: str o list(str)
             etiqueta o etiquetas de las series a graficar
 
@@ -34,79 +35,22 @@ def plot_series(series,y_tag,colour='tab:blue',save=False,folder=None,display=Tr
     if isinstance(y_tag,list):
         assert(len(series)==len(y_tag))
         for i in range(len(y_tag)):
-            sns.lineplot(data=series[i], ax=ax, markers=['o','o','o'])
+            if not obs_only:
+                sns.lineplot(data=series[i], ax=ax, markers=['o','o','o'])
+            if obs is not None:
+                sns.scatterplot(data=series[i][obs[i]], ax=ax)
         ax.legend(y_tag)
         if title is None:
             title = 'Realizaciones de series'
         ax.set(xlabel='tiempo',ylabel='valor',title=title)
     else:
-        sns.lineplot(data=series, ax=ax, markers=['o','o','o'], color=colour)
+        if not obs_only:
+            sns.lineplot(data=series, ax=ax, markers=['o','o','o'], color=colour)
+        if obs is not None:
+            sns.scatterplot(x=obs,y=series[obs], ax=ax, color='tab:red')
         if title is None:
             title = 'Realizaciones de la serie {}'.format(y_tag)
         ax.set(xlabel='tiempo',ylabel='valor de '+y_tag,title=title)
-    if display:
-        plt.show()
-    if save:
-        path = folder+ '/' + save
-        plt.savefig(path)
-
-
-def plot_spectrum(frequencies,PSD,y_tag,log=False,max_freq=None,colour='tab:blue',save=False,folder=None,display=True,title=None,ylabel='potencia',fig_size=(12,5)):
-    sns.set_theme(style="whitegrid")
-    _, ax = plt.subplots(figsize=fig_size)
-    if isinstance(y_tag,list):
-        assert(len(PSD)==len(y_tag))
-        for i in range(len(y_tag)):
-            if log:
-                ax.semilogy(frequencies,PSD[i])
-            else:
-                ax.plot(frequencies,PSD[i])
-        ax.legend(y_tag)
-        if title is None:
-            title = 'Espectros de series'
-        ax.set(xlabel='frecuencia',ylabel=ylabel,title=title)
-    else:
-        if log:
-            ax.semilogy(frequencies,PSD,c=colour)
-        else:
-            ax.plot(frequencies,PSD,c=colour)
-        if title is None:
-            title = 'Espectro de la serie {}'.format(y_tag)
-            ax.set(xlabel='frecuencia',ylabel=ylabel,title=title)
-    if max_freq is not None:
-        ax.set_xlim(left=0,right=max_freq)
-    if display:
-        plt.show()
-    if save:
-        path = folder+ '/' + save
-        plt.savefig(path)
-
-
-def plot_times(xvalues,times,y_tag,log=False,colour='tab:blue',save=False,folder=None,display=True,title=None,xlabel='tamaño N',mk=2):
-    sns.set_theme(style="whitegrid")
-    _, ax = plt.subplots(figsize=(12,5))
-    if isinstance(y_tag,list):
-        assert(len(times)==len(y_tag))
-        for i in range(len(y_tag)):
-            if log:
-                ax.semilogy(xvalues,times[i])
-            else:
-                if i<mk:
-                    ax.plot(xvalues,times[i])
-                else:
-                    ax.plot(xvalues,times[i], marker='.', linestyle=':')
-        ax.legend(y_tag)
-        if title is None:
-            title = 'Tiempos de ejecución'
-        ax.set(xlabel=xlabel,ylabel='tiempo (s)',title=title)
-    else:
-        if log:
-            ax.semilogy(xvalues,times,c=colour)
-        else:
-            ax.plot(xvalues,times,c=colour, marker='.', linestyle=':')
-        if title is None:
-            title = 'Tiempos de ejecución de {}'.format(y_tag)
-            ax.set(xlabel=xlabel,ylabel='tiempo (s)',title=title)
     if display:
         plt.show()
     if save:
