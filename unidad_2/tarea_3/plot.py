@@ -63,9 +63,7 @@ def plot_series(series,time,y_tag,obs=None,obs_only=False,colour='tab:blue',save
         plt.savefig(path)
 
 
-def plot_posterior(gp_obj, n_samples = 0, v_axis_lims = None):
-    if v_axis_lims == None:
-        v_axis_lims = np.max(np.abs(gp_obj.samples))
+def plot_posterior(gp_obj, n_samples = 0):
 
     plt.figure(figsize=(9,3))
     plt.plot(gp_obj.time,gp_obj.mean, 'b', label='posterior')
@@ -81,8 +79,9 @@ def plot_posterior(gp_obj, n_samples = 0, v_axis_lims = None):
     plt.xlabel('time')
     plt.legend(loc=1, ncol=3)
     plt.xlim([min(gp_obj.time),max(gp_obj.time)])
-    plt.ylim([-v_axis_lims,v_axis_lims])
+    # plt.ylim([-v_axis_lims,v_axis_lims])
     plt.tight_layout()
+    plt.show()
 
 
 def plot_data(gp_obj, fig_size=(18,5)):

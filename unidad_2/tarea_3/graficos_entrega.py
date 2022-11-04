@@ -1,6 +1,6 @@
 import numpy as np
 np.random.seed(0)
-from plot import plot_series, plot_data
+from plot import plot_series, plot_data, plot_posterior
 from gp.gp_lite_tarea import gp_lite
 
 # heart rates
@@ -27,3 +27,8 @@ gp.sample(how_many=2)
 
 gp.load(times[indices],hr1[indices])
 plot_data(gp)
+
+gp.compute_posterior(dimension=1000)
+# gp.plot_posterior(5,v_axis_lims = 35)
+plot_posterior(gp,5)
+print(f'negative log-likelihood: {gp.nll()}')
