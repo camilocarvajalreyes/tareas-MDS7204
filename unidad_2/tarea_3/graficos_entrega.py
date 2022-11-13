@@ -32,5 +32,12 @@ gp.load(times[indices],hr1[indices])
 
 gp.compute_posterior(dimension=1000)
 # gp.plot_posterior(5,v_axis_lims = 35)
-plot_posterior(gp,5, test_points=hr1[test_ind], test_times=times[test_ind])
 print(f'negative log-likelihood: {gp.nll()}')
+plot_posterior(gp,5, test_points=hr1[test_ind], test_times=times[test_ind])
+
+gp.train()
+
+gp.compute_posterior(dimension=1000)
+# gp.plot_posterior(5,v_axis_lims = 35)
+print(f'negative log-likelihood: {gp.nll()}')
+plot_posterior(gp,5, test_points=hr1[test_ind], test_times=times[test_ind])
