@@ -11,8 +11,10 @@ times = np.linspace(0,100,len(hr1))
 # eliminando parte de las observaciones
 ALPHA = .3
 indices = np.random.choice(len(hr1), int(len(hr1)*(1-ALPHA)), replace=False)
+test_ind = np.array([i for i in range(len(hr1)) if i not in indices])
 
-# plot_series(hr1,times,'Pulso sanguineo 1',obs=indices,obs_only=True)
+plot_series([hr1[indices],hr1[test_ind]],[times[indices],times[test_ind]],['Train','Test'])
+# plot_series(hr1[indices],times[indices],'Train',obs_only=True)
 # equivalente a plot_data(gp)
 
 
@@ -26,9 +28,9 @@ gp.sample(how_many=2)
 # gp.plot_samples()
 
 gp.load(times[indices],hr1[indices])
-plot_data(gp)
+# plot_data(gp)
 
 gp.compute_posterior(dimension=1000)
 # gp.plot_posterior(5,v_axis_lims = 35)
-plot_posterior(gp,5)
+plot_posterior(gp,5, test_points=hr1[test_ind], test_times=times[test_ind])
 print(f'negative log-likelihood: {gp.nll()}')

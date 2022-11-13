@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_series(series,time,y_tag,obs=None,obs_only=False,colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
+def plot_series(series,time,y_tag,obs=None,mode='scatter',colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
     """
     Plotea una (o varias) serie(s) de tiempo
 
@@ -39,20 +39,24 @@ def plot_series(series,time,y_tag,obs=None,obs_only=False,colour='tab:blue',save
     if isinstance(y_tag,list):
         assert(len(series)==len(y_tag))
         for i in range(len(y_tag)):
-            if not obs_only:
+            if mode=='line':
                 sns.lineplot(x=time[i],y=series[i], ax=ax, markers=['o','o','o'])
-            if obs is not None:
-                sns.scatterplot(x=time[i][obs[i]],y=series[i][obs[i]], ax=ax)
+            elif mode=='scatter':
+                sns.scatterplot(x=time[i],y=series[i], ax=ax)
+            else:
+                raise ValueError("parámetro 'mode' debe ser o 'line' o bien 'scatter'")
         ax.legend(y_tag)
         if title is None:
             title = 'Realizaciones de series'
         ax.set(xlabel='tiempo',ylabel='valor',title=title)
     else:
         assert(len(series)==len(time))
-        if not obs_only:
+        if mode=='line':
             sns.lineplot(x=time,y=series, ax=ax, markers=['o','o','o'], color=colour)
-        if obs is not None:
-            sns.scatterplot(x=time[obs],y=series[obs], ax=ax, color='tab:red')
+        elif mode=='scatter':
+            sns.scatterplot(x=time,y=series, ax=ax)
+        else:
+            raise ValueError("parámetro 'mode' debe ser o 'line' o bien 'scatter'")
         if title is None:
             title = 'Realizaciones de la serie {}'.format(y_tag)
         ax.set(xlabel='tiempo',ylabel='valor de '+y_tag,title=title)
@@ -63,12 +67,16 @@ def plot_series(series,time,y_tag,obs=None,obs_only=False,colour='tab:blue',save
         plt.savefig(path)
 
 
-def plot_posterior(gp_obj, n_samples = 0):
+def plot_posterior(gp_obj, n_samples = 0,  test_points=None, test_times=None):
 
     plt.figure(figsize=(9,3))
     plt.plot(gp_obj.time,gp_obj.mean, 'b', label='posterior')
 
-    plt.plot(gp_obj.x,gp_obj.y, '.r', markersize = 8, label='data')
+    plt.plot(gp_obj.x,gp_obj.y, '.b', markersize = 8, label='data')
+
+    if test_points is not None:
+        plt.scatter(x=test_times,y=test_points, color='tab:orange', label='test data')
+
     error_bars = 2 * np.sqrt((np.diag(gp_obj.cov)))
     plt.fill_between(gp_obj.time, gp_obj.mean - error_bars, gp_obj.mean + error_bars, color='blue',alpha=0.1, label='95% error bars')
     if n_samples > 0:
