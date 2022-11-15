@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_series(series,time,y_tag,obs=None,mode='scatter',colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
+def plot_series(series,time,y_tag,mode='scatter',colour='tab:blue',save=False,folder=None,display=True,title=None,fig_size=(18,5)):
     """
     Plotea una (o varias) serie(s) de tiempo
 
@@ -67,10 +67,9 @@ def plot_series(series,time,y_tag,obs=None,mode='scatter',colour='tab:blue',save
         plt.savefig(path)
 
 
-def plot_posterior(gp_obj, n_samples = 0,  test_points=None, test_times=None):
-
-    plt.figure(figsize=(9,3))
-    plt.plot(gp_obj.time,gp_obj.mean, 'b', label='posterior')
+def plot_posterior(gp_obj,n_samples=0,test_points=None,test_times=None,fig_size=(18,5),title=None,save=False,folder=None):
+    plt.figure(figsize=fig_size)
+    plt.plot(gp_obj.time,gp_obj.mean, 'tab:purple', label='posterior')
 
     plt.plot(gp_obj.x,gp_obj.y, '.b', markersize = 8, label='data')
 
@@ -83,24 +82,41 @@ def plot_posterior(gp_obj, n_samples = 0,  test_points=None, test_times=None):
         gp_obj.compute_posterior(where = gp_obj.time)
         gp_obj.sample(how_many = n_samples)
         plt.plot(gp_obj.time,gp_obj.samples,alpha = 0.7)
-    plt.title('Posterior')
+    if title is None:
+        plt.title('Posterior')
+    else:
+        plt.title(title)
     plt.xlabel('time')
     plt.legend(loc=1, ncol=3)
     plt.xlim([min(gp_obj.time),max(gp_obj.time)])
     # plt.ylim([-v_axis_lims,v_axis_lims])
     plt.tight_layout()
-    plt.show()
+
+    if save:
+        path = folder+ '/' + save
+        plt.savefig(path)
+    else:
+        plt.show()
 
 
-def plot_data(gp_obj, fig_size=(18,5)):
+def plot_data(gp_obj,fig_size=(18,5),title=None,save=False,folder=None):
     plt.figure(figsize=fig_size)
 
     plt.plot(gp_obj.x,gp_obj.y, '.r', markersize = 8,label='data')
 
-    plt.title('Posterior')
+    if title is None:
+        plt.title('Posterior')
+    else:
+        plt.title(title)
+    
     plt.xlabel('time')
     plt.legend(loc=1)
     plt.xlim([min(gp_obj.time),max(gp_obj.time)])
     # plt.ylim([-v_axis_lims,v_axis_lims])
     plt.tight_layout()
-    plt.show()
+    
+    if save:
+        path = folder+ '/' + save
+        plt.savefig(path)
+    else:
+        plt.show()
