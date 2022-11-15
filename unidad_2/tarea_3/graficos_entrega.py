@@ -42,7 +42,7 @@ gp.compute_posterior(dimension=1000)
 print(f'negative log-likelihood modelo sin entrenar: {gp.nll()}')
 titulo = "Posterior para GP sin entrenar, alpha={}%".format(ALPHA*100)
 img_file = "untrained_gp_post.png" if save_plots else None
-plot_posterior(gp,5, test_points=hr1[test_ind], test_times=times[test_ind],title=titulo,save=img_file,folder=img_dir)
+plot_posterior(gp,0, test_points=hr1[test_ind], test_times=times[test_ind],title=titulo,save=img_file,folder=img_dir)
 
 
 # Entrenamiento
@@ -54,4 +54,4 @@ if entrenar:
     # gp.plot_posterior(5,v_axis_lims = 35)
     print(f'Negative log-likelihood modelo entrenado: {gp.nll()}')
     img_file = "trained_gp_post.png" if save_plots else None
-    plot_posterior(gp,5, test_points=hr1[test_ind],test_times=times[test_ind],save=img_file,folder=img_dir,title=titulo)
+    plot_posterior(gp,0, test_points=hr1[test_ind],test_times=times[test_ind],save=img_file,folder=img_dir,title=titulo)
