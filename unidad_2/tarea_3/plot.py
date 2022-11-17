@@ -71,10 +71,10 @@ def plot_posterior(gp_obj,n_samples=0,test_points=None,test_times=None,fig_size=
     plt.figure(figsize=fig_size)
     plt.plot(gp_obj.time,gp_obj.mean, 'tab:purple', label='posterior')
 
-    plt.plot(gp_obj.x,gp_obj.y, '.b', markersize = 8, label='data')
+    plt.plot(gp_obj.x,gp_obj.y, '.r', markersize = 8, label='data')
 
     if test_points is not None:
-        plt.scatter(x=test_times,y=test_points, color='tab:orange', label='test data')
+        plt.scatter(x=test_times,y=test_points, color='tab:blue', label='test data')
 
     error_bars = 2 * np.sqrt((np.diag(gp_obj.cov)))
     plt.fill_between(gp_obj.time, gp_obj.mean - error_bars, gp_obj.mean + error_bars, color='blue',alpha=0.1, label='95% error bars')
