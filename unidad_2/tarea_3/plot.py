@@ -86,7 +86,7 @@ def plot_posterior(gp_obj,n_samples=0,test_points=None,test_times=None,fig_size=
         plt.title('Posterior')
     else:
         plt.title(title)
-    plt.xlabel('time')
+    plt.xlabel('tiempo (minutos)')
     plt.legend(loc=1, ncol=3)
     plt.xlim([min(gp_obj.time),max(gp_obj.time)])
     # plt.ylim([-v_axis_lims,v_axis_lims])

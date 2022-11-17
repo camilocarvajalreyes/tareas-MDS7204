@@ -17,6 +17,7 @@ hr1 = np.loadtxt('unidad_1/tarea_2/hr.7257.txt')
 # eliminando parte de las observaciones
 ALPHA = .3
 indices = np.random.choice(len(hr1), int(len(hr1)*(1-ALPHA)), replace=False)
+time = np.linspace(0,15,1800)
 test_ind = np.array([i for i in range(len(hr1)) if i not in indices])
 
 # titulo = "Puntos de entrenamiento y testeo, alpha = {}%".format((ALPHA*100))
@@ -32,26 +33,26 @@ gp.show_hypers()
 # gp.sample(how_many=2)
 # gp.plot_samples()
 
-gp.load(indices,hr1[indices])
+gp.load(time[indices],hr1[indices])
 # plot_data(gp)
 
-gp.compute_posterior(where=np.arange(len(hr1)))
+gp.compute_posterior(where=time)
 
 print(f'negative log-likelihood modelo sin entrenar: {gp.nll()}')
 eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenar')
 titulo = "Posterior para GP sin entrenar, alpha={}%".format(ALPHA*100)
 img_file = "untrained_gp_post.png" if save_plots else None
-plot_posterior(gp,0, test_points=hr1[test_ind], test_times=test_ind,title=titulo,save=img_file,folder=img_dir)
+plot_posterior(gp,0, test_points=hr1[test_ind], test_times=time[test_ind],title=titulo,save=img_file,folder=img_dir)
 
 
 # Entrenamiento
 if entrenar:
     gp.train()
     titulo = "Posterior para GP entrenada, alpha={}%".format(ALPHA*100)
-    gp.compute_posterior(where=np.arange(len(hr1)))
+    gp.compute_posterior(where=time)
 
     print(f'Negative log-likelihood modelo entrenado: {gp.nll()}')
-    eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenarentrenado')
+    eval(time[test_ind],hr1[test_ind],gp,nombre_modelo='modelo sin entrenarentrenado')
     gp.show_hypers()
     img_file = "trained_gp_post.png" if save_plots else None
-    plot_posterior(gp,0, test_points=hr1[test_ind],test_times=test_ind,save=img_file,folder=img_dir,title=titulo)
+    plot_posterior(gp,0, test_points=hr1[test_ind],test_times=time[test_ind],save=img_file,folder=img_dir,title=titulo)
