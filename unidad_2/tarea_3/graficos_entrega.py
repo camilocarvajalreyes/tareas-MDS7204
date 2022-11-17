@@ -2,7 +2,7 @@ import numpy as np
 np.random.seed(0)
 from plot import plot_posterior
 from gp.gp_lite_tarea import gp_lite_camilo
-from eval import MSE
+from eval import eval
 
 # Parámetros del código
 
@@ -38,7 +38,7 @@ gp.load(indices,hr1[indices])
 gp.compute_posterior(where=np.arange(len(hr1)))
 
 print(f'negative log-likelihood modelo sin entrenar: {gp.nll()}')
-print("Error cuadratico medio conjunto test modelo sin entrenar: {}".format(MSE(test_ind,hr1[test_ind],gp)))
+eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenar')
 titulo = "Posterior para GP sin entrenar, alpha={}%".format(ALPHA*100)
 img_file = "untrained_gp_post.png" if save_plots else None
 plot_posterior(gp,0, test_points=hr1[test_ind], test_times=test_ind,title=titulo,save=img_file,folder=img_dir)
@@ -51,7 +51,7 @@ if entrenar:
     gp.compute_posterior(where=np.arange(len(hr1)))
 
     print(f'Negative log-likelihood modelo entrenado: {gp.nll()}')
-    print("Error cuadratico medio conjunto test modelo entrenado: {}".format(MSE(test_ind,hr1[test_ind],gp)))
+    eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenarentrenado')
     gp.show_hypers()
     img_file = "trained_gp_post.png" if save_plots else None
     plot_posterior(gp,0, test_points=hr1[test_ind],test_times=test_ind,save=img_file,folder=img_dir,title=titulo)
