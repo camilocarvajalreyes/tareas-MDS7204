@@ -37,10 +37,13 @@ class gp_lite:
 			self.sigma_n = theta[3]
 
 	def show_hypers(self):
+		print("------------")
+		print("Parámetros del modelo:")
 		print(f'gamma: {self.gamma}, i.e., lengthscale = {np.sqrt(1/(2*self.gamma))}')
 		print(f'sigma: {self.sigma}')
 		print(f'sigma_n: {self.sigma_n}')
 		print(f'mu: {self.mu}')
+		print("-------------")
 
 
 	def sample(self, how_many=1):
@@ -169,3 +172,20 @@ class gp_lite:
 		plt.ylim([-v_axis_lims,v_axis_lims])
 		plt.tight_layout()
 		plt.show()
+
+class gp_lite_camilo(gp_lite):
+
+	def pred_dist(self,where):
+
+		time = where
+		N = len(where)
+
+		cov_grid = Spec_Mix(time,time, self.gamma, self.mu, self.sigma) + 1e-5*np.eye(N) + self.sigma_n**2*np.eye(N)
+
+		cov_obs = Spec_Mix(self.x,self.x,self.gamma,self.mu,self.sigma) + 1e-5*np.eye(self.Nx) + self.sigma_n**2*np.eye(self.Nx)
+		cov_star = Spec_Mix(time,self.x, self.gamma, self.mu, self.sigma)
+
+		mean = np.squeeze(cov_star@np.linalg.solve(cov_obs,self.y))
+		cov =  cov_grid - (cov_star@np.linalg.solve(cov_obs,cov_star.T))
+
+		return mean, cov
