@@ -1,7 +1,8 @@
 import numpy as np
 np.random.seed(0)
 from plot import plot_posterior
-from gp.gp_lite_tarea import gp_lite_camilo
+from gp.gp_camilo import GaussianProcess
+from kernels import SpectralMixtureKernel
 from eval import eval
 
 # Parámetros del código
@@ -25,20 +26,16 @@ test_ind = np.array([i for i in range(len(hr1)) if i not in indices])
 # mas o menos equivalente a plot_data(gp)
 
 
-gp = gp_lite_camilo()
-gp.init_hypers()
-gp.show_hypers()
-
-
-# gp.sample(how_many=2)
-# gp.plot_samples()
+gp = GaussianProcess()
+gp.kernel = SpectralMixtureKernel()
+gp.kernel.show_hypers()
+print(f'\tsigma_n = {gp.sigma_n}')
 
 gp.load(time[indices],hr1[indices])
 # plot_data(gp)
 
 gp.compute_posterior(where=time)
 
-print(f'negative log-likelihood modelo sin entrenar: {gp.nll()}')
 eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenar')
 titulo = "Posterior para GP sin entrenar, alpha={}%".format(ALPHA*100)
 img_file = "untrained_gp_post.png" if save_plots else None
@@ -52,7 +49,7 @@ if entrenar:
     gp.compute_posterior(where=time)
 
     print(f'Negative log-likelihood modelo entrenado: {gp.nll()}')
-    eval(time[test_ind],hr1[test_ind],gp,nombre_modelo='modelo sin entrenarentrenado')
-    gp.show_hypers()
+    eval(time[test_ind],hr1[test_ind],gp,nombre_modelo='modelo entrenado')
+    # gp.kernel.show_hypers()
     img_file = "trained_gp_post.png" if save_plots else None
     plot_posterior(gp,0, test_points=hr1[test_ind],test_times=time[test_ind],save=img_file,folder=img_dir,title=titulo)
