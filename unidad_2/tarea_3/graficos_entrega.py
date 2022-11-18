@@ -10,7 +10,7 @@ from eval import eval
 np.random.seed(0)
 # kernel = "SM"
 kernel = "periodic"
-entrenar = False
+entrenar = True
 save_plots = True  # si guardar o no las figuras
 img_dir = "unidad_2/tarea_3/informe/img"  # directorio en caso de guardar las figuras
 
@@ -28,11 +28,10 @@ test_ind = np.array([i for i in range(len(hr1)) if i not in indices])
 # mas o menos equivalente a plot_data(gp)
 
 
-gp = GaussianProcess()
 if kernel == "SM":
-    gp.kernel = SpectralMixtureKernel()
+    gp = GaussianProcess(kernel=SpectralMixtureKernel())
 elif kernel == "periodic":
-    gp.kernel = PeriodicKernel()
+    gp = GaussianProcess(kernel=PeriodicKernel(),sigma_n=1.0)
 
 gp.kernel.show_hypers()
 print(f'\tsigma_n = {gp.sigma_n}')
