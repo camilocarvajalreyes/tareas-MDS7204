@@ -132,8 +132,8 @@ class PeriodicKernel:
         sin, cos = np.sin(arg), np.cos(arg)
 
         dKdsigma = 2*Gram/sigma
-        dKdl = 4 * K * sin**2 / length_scale**3
-        dKdperiod = 4 * K * sin / length_scale**2 * cos * arg / periodicity
+        dKdl = 4 * Gram * sin**2 / length_scale**3
+        dKdperiod = 4 * Gram * sin / length_scale**2 * cos * arg / periodicity
         dKdsigma_n = 2*sigma_n*np.eye(Nx)
 
         H = (np.outer(h,h) - np.linalg.inv(K))
@@ -144,14 +144,14 @@ class PeriodicKernel:
         return np.array([-dlogp_dsigma, -dlogp_dl, -dlogp_dperiod, -dlogp_dsigma_n])
     
     
-    def update_params(self, X, Y, sigma_n, Nx, verbose=True):
+    def update_params(self, X, Y, sigma_n, Nx, verbose=True, metodo='Newton-CG'):  # L-BFGS-B
 		
         hypers0 = np.array([np.log(self.sigma), np.log(self.length_scale), np.log(self.periodicity), np.log(sigma_n)])
 
         jacobian = lambda hypers: self.dnlogp(X, Y, Nx, hypers)
         obj_fun = lambda hypers: self.nlogp(X, Y, Nx, hypers)
 
-        res = minimize(obj_fun, hypers0, args=(), method='Newton-CG', jac=jacobian, options={'maxiter': 500, 'disp': verbose})
+        res = minimize(obj_fun, hypers0, args=(), method=metodo, jac=jacobian, options={'maxiter': 500, 'disp': verbose})
 
         self.sigma = np.exp(res.x[0])
         self.length_scale = np.exp(res.x[1])
@@ -199,8 +199,8 @@ class RBFKernel:
 
         h = np.linalg.solve(K,y).T
 
-        dKdsigma = 2 * sigma * K
-        # dKdl = 4 * K * sin**2 / length_scale**3
+        dKdsigma = 2*Gram/sigma
+        dKdl = 4 * K * sin**2 / length_scale**3
         dKdsigma_n = 2*sigma_n*np.eye(Nx)
 
         H = (np.outer(h,h) - np.linalg.inv(K))
@@ -210,14 +210,14 @@ class RBFKernel:
         # return np.array([-dlogp_dsigma, -dlogp_dl, -dlogp_dsigma_n])
     
     
-    def update_params(self, X, Y, sigma_n, Nx, verbose=True):
+    def update_params(self, X, Y, sigma_n, Nx, verbose=True, metodo='Newton-CG'):  # L-BFGS-B
 		
         hypers0 = np.array([np.log(self.sigma), np.log(self.length_scale), np.log(self.periodicity), np.log(sigma_n)])
 
         jacobian = lambda hypers: self.dnlogp(X, Y, Nx, hypers)
         obj_fun = lambda hypers: self.nlogp(X, Y, Nx, hypers)
 
-        res = minimize(obj_fun, hypers0, args=(), method='Newton-CG', jac=jacobian, options={'maxiter': 500, 'disp': verbose})
+        res = minimize(obj_fun, hypers0, args=(), method=metodo, jac=jacobian, options={'maxiter': 500, 'disp': verbose})
 
         self.sigma = np.exp(res.x[0])
         self.length_scale = np.exp(res.x[1])
