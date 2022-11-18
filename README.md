@@ -13,4 +13,6 @@ Entregables del ramo MDS7204 - Aprendizaje de Máquinas Avanzado Primavera 2022
 - Fast Fourier Transform: [Funciones DFT y FFT](https://github.com/camilocarvajalreyes/tareas-MDS7204/blob/main/unidad_1/tarea_2/FourierTransform.py) - [Complejidad empírica](https://github.com/camilocarvajalreyes/tareas-MDS7204/blob/main/unidad_1/tarea_2/fft_complejidad_empirica.py)
 
 ## Unidad 2 - Procesos Gaussianos
-Se viene
+### **Tarea 3 - Reconstrucción de señal con GP**: [Informe (pdf)](unidad_2/tarea_3/Informe_Tarea_3_Procesos_Gaussianos.pdf)
+- [Clase GaussianProcess](unidad_2/tarea_3/gp/gp_camilo.py) (modificación de [GP_lite](https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes/blob/main/gp_lite.py))
+- [Clases Kernel](unidad_2/tarea_3/kernels.py)
