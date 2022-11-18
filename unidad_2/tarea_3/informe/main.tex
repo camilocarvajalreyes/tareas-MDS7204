@@ -75,13 +75,23 @@ En la presenta tarea se presentarán aplicaciones de Procesos Gaussianos usando 
 
 % Ejemplo, se puede borrar
 \section{\textit{Kernel Spectral Mixture}}
-Consideramos primeramente el kernel de Mixtura Espectral dado por: $K(x)=\displaystyle \sum^Q_{q=1}\sigma^2_q exp(-2\pi^2l^2_qx^2)cos(2\pi\mu_qx)$. Para esto, usamos el toolkit \href{https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes}{gp\_lite}, en la cual este kernel viene implementado. Usar los parámetros por defecto nos da un proceso como el mostrado en la figura \ref{img:ungtrained}. Vale señalar que variar el dominio temporal da distintos resultados en esta fase (no así cuando se ajustan los parámetros). Acá nos movemos en el dominio de los minutos.
+Consideramos primeramente el kernel de Mixtura Espectral dado por: 
+$$K(x)=\displaystyle \sum^Q_{q=1}\sigma^2_q exp(-2\pi^2l^2_qx^2)cos(2\pi\mu_qx).$$
+Para esto, usamos el toolkit \href{https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes}{gp\_lite}, en la cual este kernel viene implementado. Usar los parámetros por defecto nos da un proceso como el mostrado en la figura \ref{img:untrained}. Vale señalar que variar el dominio temporal da distintos resultados en esta fase (no así cuando se ajustan los parámetros). Acá nos movemos en el dominio de los minutos.
 
-\insertimage[\label{img:untrained}]{img/untrained_gp_post}{scale=0.38}{Posterior para GP sin entrenar}
+\insertimage[\label{img:untrained}]{img/untrained_gp_SM_post}{scale=0.38}{Posterior para GP sin entrenar}
 
 Notemos que \lipsum[1]. Por otro lado ...
 
-\insertimage[\label{img:trained}]{img/trained_gp_post}{scale=0.38}{Posterior para GP entrenada}
+\insertimage[\label{img:trained}]{img/trained_gp_SM_post}{scale=0.38}{Posterior para GP entrenada}
+
+\lipsum[2]
+
+\insertimage[\label{img:untrained}]{img/untrained_gp_periodic_post}{scale=0.38}{Posterior para GP sin entrenar}
+
+Notemos que \lipsum[1]. Por otro lado ...
+
+\insertimage[\label{img:trained}]{img/trained_gp_periodic_post}{scale=0.38}{Posterior para GP entrenada}
 
 
 % FIN DEL DOCUMENTO
