@@ -145,7 +145,7 @@ class PeriodicKernel:
         jacobian = lambda hypers: self.dnlogp(X, Y, Nx, hypers)
         obj_fun = lambda hypers: self.nlogp(X, Y, Nx, hypers)
 
-        res = minimize(obj_fun, hypers0, args=(), method='L-BFGS-B', jac=jacobian, options={'maxiter': 500, 'disp': verbose})
+        res = minimize(obj_fun, hypers0, args=(), method='Newton-CG', jac=jacobian, options={'maxiter': 500, 'disp': verbose})
 
         self.length_scale = np.exp(res.x[0])
         self.periodicity = np.exp(res.x[1])
