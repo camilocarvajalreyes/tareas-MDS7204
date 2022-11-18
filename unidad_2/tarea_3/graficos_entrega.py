@@ -2,12 +2,14 @@ import numpy as np
 np.random.seed(0)
 from plot import plot_posterior
 from gp.gp_camilo import GaussianProcess
-from kernels import SpectralMixtureKernel
+from kernels import SpectralMixtureKernel, PeriodicKernel
 from eval import eval
 
 # Parámetros del código
 
 np.random.seed(0)
+# kernel = "SM"
+kernel = "periodic"
 entrenar = True
 save_plots = True  # si guardar o no las figuras
 img_dir = "unidad_2/tarea_3/informe/img"  # directorio en caso de guardar las figuras
@@ -27,7 +29,11 @@ test_ind = np.array([i for i in range(len(hr1)) if i not in indices])
 
 
 gp = GaussianProcess()
-gp.kernel = SpectralMixtureKernel()
+if kernel == "SM":
+    gp.kernel = SpectralMixtureKernel()
+elif kernel == "periodic":
+    gp.kernel = PeriodicKernel()
+
 gp.kernel.show_hypers()
 print(f'\tsigma_n = {gp.sigma_n}')
 
@@ -36,20 +42,19 @@ gp.load(time[indices],hr1[indices])
 
 gp.compute_posterior(where=time)
 
-eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenar')
-titulo = "Posterior para GP sin entrenar, alpha={}%".format(ALPHA*100)
-img_file = "untrained_gp_post.png" if save_plots else None
+eval(test_ind,hr1[test_ind],gp,nombre_modelo='modelo sin entrenar, {} kernel'.format(kernel))
+titulo = "Posterior para GP sin entrenar, alpha={}%, {} kernel".format(ALPHA*100,kernel)
+img_file = "untrained_gp_{}_post.png".format(kernel) if save_plots else None
 plot_posterior(gp,0, test_points=hr1[test_ind], test_times=time[test_ind],title=titulo,save=img_file,folder=img_dir)
 
 
 # Entrenamiento
 if entrenar:
     gp.train()
-    titulo = "Posterior para GP entrenada, alpha={}%".format(ALPHA*100)
+    titulo = "Posterior para GP entrenada, alpha={}%, {} kernel".format(ALPHA*100,kernel)
     gp.compute_posterior(where=time)
 
-    print(f'Negative log-likelihood modelo entrenado: {gp.nll()}')
-    eval(time[test_ind],hr1[test_ind],gp,nombre_modelo='modelo entrenado')
+    eval(time[test_ind],hr1[test_ind],gp,nombre_modelo='modelo entrenado, {} kernel'.format(kernel))
     # gp.kernel.show_hypers()
-    img_file = "trained_gp_post.png" if save_plots else None
+    img_file = "trained_gp_{}_post.png".format(kernel) if save_plots else None
     plot_posterior(gp,0, test_points=hr1[test_ind],test_times=time[test_ind],save=img_file,folder=img_dir,title=titulo)
