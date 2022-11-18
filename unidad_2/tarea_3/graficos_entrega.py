@@ -1,8 +1,8 @@
 import numpy as np
 np.random.seed(0)
 from plot import plot_posterior
-from gp.gp_camilo import GaussianProcess
-from kernels import SpectralMixtureKernel, PeriodicKernel
+from gp.gp_lite_tarea import GaussianProcess
+from gp.kernels import SpectralMixtureKernel, PeriodicKernel
 from eval import eval
 
 # Parámetros del código
@@ -10,7 +10,7 @@ from eval import eval
 np.random.seed(0)
 # kernel = "SM"
 kernel = "periodic"
-entrenar = True
+entrenar = False
 save_plots = True  # si guardar o no las figuras
 img_dir = "unidad_2/tarea_3/informe/img"  # directorio en caso de guardar las figuras
 
