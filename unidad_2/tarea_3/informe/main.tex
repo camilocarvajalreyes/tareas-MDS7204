@@ -76,26 +76,30 @@ En la presenta tarea se presentarán aplicaciones de Procesos Gaussianos usando 
 % Ejemplo, se puede borrar
 \section{\textit{Kernel Spectral Mixture}}
 Consideramos primeramente el kernel de Mixtura Espectral dado por: 
-$$K(x)=\displaystyle \sum^Q_{q=1}\sigma^2_q exp(-2\pi^2l^2_qx^2)cos(2\pi\mu_qx).$$
-Para esto, usamos el toolkit \href{https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes}{gp\_lite}, en la cual este kernel viene implementado. Usar los parámetros por defecto nos da un proceso como el mostrado en la figura \ref{img:untrained}. Vale señalar que variar el dominio temporal da distintos resultados en esta fase (no así cuando se ajustan los parámetros). Acá nos movemos en el dominio de los minutos.
+$$K(x)=\sigma^2 exp(-2\pi^2\gamma^2x^2)cos(2\pi\mu x)\,.$$
+Además poseemos un parámetro $\mu_n$ que puede interpretarse como un nivel de confianza en la medición. Para esto, usamos el toolkit \href{https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes}{gp\_lite}, en la cual este kernel viene implementado. Usar los parámetros por defecto ($\sigma = 10, \gamma = 0.5, \mu = 0.1, \sigma_n = 0.1$) nos da un proceso como el mostrado en la figura \ref{img:untrained} (a). Vale señalar que variar el dominio temporal da distintos resultados en esta fase (no así cuando se ajustan los parámetros). Acá nos movemos en el dominio de los minutos. Cuando la serie la definimos en el dominio de los minutos. Vale señalar que los resultados por defecto varían drásticamente al cambiar el dominio inicial. En la figura \ref{img:untrained} (b) tenemos una actualización manual de parámetros ($\sigma = 10, \gamma = 0.75, \mu = 0.75, \sigma_n = 0.5$) que muestra un ajuste razonable a nuestra serie original.
 
 \begin{images}[\label{img:untrained}]{Posterior para GP sin entrenar}
     \addimage{img/untrained_gp_SM_post}{width=8.2cm}{Parámetros por defecto}
     \addimage{img/SM_params/best_manual}{width=8.2cm}{Parámetros manuales}
 \end{images}
 
-Notemos que \lipsum[1]. Por otro lado ...
-
-\insertimage[\label{img:trained}]{img/trained_gp_SM_post}{scale=0.38}{Posterior para GP entrenada}
-
 \subsection{Análisis de parámetros}
-\begin{images}[\label{img:cos}]{Parámetros variados respecto a kernel por defecto}
+En lo que sigue se realiza un análisis cualitativo de los parámetros del kernel SM. Primero notemos que la variación de $\mu$ se refleja en una frecuencia de oscilación, lo cual se condice con su rol dentro del término coseno. En el gráfico \ref{img:exp-sm} (a) podemos ver el efecto de un valor exageradamente grande, para luego ver un efecto más suave en la parte \ref{img:exp-sm} (b). Por otro lado, las variaciones de el parámetro $sigma$ se manifiestan en menores oscilaciones para parámetros pequeños (no consideramos pertinente incluirlos en el informe). Esto es similar para $\gamma$, en cuyo caso un valor pequeño se manifiesta en un bajo juste a los datos observados (figura \ref{img:exp-sm} (c)). Esto contrasta con el sobre-ajuste que se observa en la figura \ref{img:exp-sm} (d). Esto puesto que el término que multiplica $x$ es demasiado alto y por ende domina el efecto del kernel (con esto no cumple realmente su rol suavizador).
+
+\newp Como parámetro aparte, $\sigma_n$, como es de esperar, es proporcional a la varianza del proceso Gaussiano, con lo cual se admiten posibles más puntos alrededor de la media del posterior. Esto se observa en la sub-figura \ref{img:untrained} (b) anterior.
+
+\begin{images}[\label{img:exp-sm}]{Parámetros variados respecto a kernel por defecto}
+    \addimage{img/SM_params/mu_10.0}{width=7.8cm}{$\mu=10.0$}
+    \addimage{img/SM_params/mu_1.0}{width=7.8cm}{$\mu=1.0$}
+    \newline
     \addimage{img/SM_params/gamma_0.1}{width=8.2cm}{$\gamma=0.1$}
     \addimage{img/SM_params/gamma_1000.0}{width=8.2cm}{$\gamma=1000.0$}
-    \newline
-    \addimage{img/SM_params/mu_1.0}{width=7.8cm}{$\mu=1.0$}
-    \addimage{img/SM_params/mu_10.0}{width=7.8cm}{$\mu=10.0$}
 \end{images}
+
+Al minimizar la log-verosimilitud negativa, logramos obtener los parámetros óptimos. Esto se manifiesta en un Proceso Gaussiano ajustado como se visualiza en la figura \ref{img:trained}. En este caso la combinación óptima encontrada es: $\sigma=61.644,\gamma=29.694,\mu=0.012$ y $\sigma_n=0.919$.
+
+\insertimage[\label{img:trained}]{img/trained_gp_SM_post}{scale=0.38}{Posterior para GP entrenada}
 
 \section{Kernel Periódico}
 
