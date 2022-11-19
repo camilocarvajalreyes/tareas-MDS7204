@@ -4,10 +4,6 @@ from scipy.optimize import minimize
 def outersum(a,b):
     return np.outer(a,np.ones_like(b))+np.outer(np.ones_like(a),b)
 
-def Periodic(x,y,sigma,p,gamma):
-	"""Implementacion de un kernel periodico"""
-	return sigma**2 * np.exp((-2*(np.sin(np.pi*np.abs(x-y)/p))**2)/(gamma**2))
-
 
 class SpectralMixtureKernel:
     """Kernel Mixtura Espectral"""
@@ -65,6 +61,7 @@ class SpectralMixtureKernel:
         dlogp_dgamma = gamma * 0.5*np.trace(H@dKdgamma)
         dlogp_dmu = mu * 0.5*np.trace(H@dKdmu)
         dlogp_dsigma_n = sigma_n * 0.5*np.trace(H@dKdsigma_n)
+
         return np.array([-dlogp_dsigma, -dlogp_dgamma, -dlogp_dmu, -dlogp_dsigma_n])
     
     
@@ -200,19 +197,19 @@ class RBFKernel:
         h = np.linalg.solve(K,y).T
 
         dKdsigma = 2*Gram/sigma
-        dKdl = 4 * K * sin**2 / length_scale**3
+        dKdl = outersum(x,-x)**2 * Gram / length_scale**3
         dKdsigma_n = 2*sigma_n*np.eye(Nx)
 
         H = (np.outer(h,h) - np.linalg.inv(K))
         dlogp_dsigma = length_scale * 0.5*np.trace(H@dKdsigma)
-        # dlogp_dl = length_scale * 0.5*np.trace(H@dKdl)
+        dlogp_dl = length_scale * 0.5*np.trace(H@dKdl)
         dlogp_dsigma_n = sigma_n * 0.5*np.trace(H@dKdsigma_n)
-        # return np.array([-dlogp_dsigma, -dlogp_dl, -dlogp_dsigma_n])
+        return np.array([-dlogp_dsigma, -dlogp_dl, -dlogp_dsigma_n])
     
     
-    def update_params(self, X, Y, sigma_n, Nx, verbose=True, metodo='Newton-CG'):  # L-BFGS-B
+    def update_params(self, X, Y, sigma_n, Nx, verbose=True, metodo='L-BFGS-B'):  # Newton-CG
 		
-        hypers0 = np.array([np.log(self.sigma), np.log(self.length_scale), np.log(self.periodicity), np.log(sigma_n)])
+        hypers0 = np.array([np.log(self.sigma), np.log(self.length_scale), np.log(sigma_n)])
 
         jacobian = lambda hypers: self.dnlogp(X, Y, Nx, hypers)
         obj_fun = lambda hypers: self.nlogp(X, Y, Nx, hypers)
@@ -221,7 +218,6 @@ class RBFKernel:
 
         self.sigma = np.exp(res.x[0])
         self.length_scale = np.exp(res.x[1])
-        self.periodicity = np.exp(res.x[2])
-        new_sigma_n = np.exp(res.x[3])
+        new_sigma_n = np.exp(res.x[2])
 
-        return new_sigma_n, np.array([self.sigma, self.length_scale, self.periodicity])
+        return new_sigma_n, np.array([self.sigma, self.length_scale])
