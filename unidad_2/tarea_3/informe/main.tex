@@ -99,17 +99,29 @@ En lo que sigue se realiza un análisis cualitativo de los parámetros del kerne
 
 Al minimizar la log-verosimilitud negativa, logramos obtener los parámetros óptimos. Esto se manifiesta en un Proceso Gaussiano ajustado como se visualiza en la figura \ref{img:trained}. En este caso la combinación óptima encontrada es: $\sigma=61.644,\gamma=29.694,\mu=0.012$ y $\sigma_n=0.919$.
 
-\insertimage[\label{img:trained}]{img/trained_gp_SM_post}{scale=0.38}{Posterior para GP entrenada}
+\insertimage[\label{img:trained}]{img/trained_gp_SM_post}{scale=0.35}{Posterior para GP entrenada}
 
-\section{Kernel Periódico}
+\section{Kernel \textit{Radial Basis Function}}
 
-\lipsum[2]
+En esta sección abordamos el kernel Función de base radial o RBF por sus siglas en inglés. También llamado exponencial cuadrática ya que está dado por:
+$$ K(x) = \sigma^2\exp(-\frac{x^2}{2\gamma^2}) \,.$$
+Es el kernel ``por defecto'' en algunas implementaciones, lo cual se debe a sus buenas propiedades. Además, comparte similitudes con el kernel de mixtura espectral, sin embargo su expresión es simplificada. Como primera hipótesis, como para nuestra serie de arritmia funcionaron mejor valores de $\mu$ pequeños, se conjetura que una forma de kernel como la RBF bastaría para modelar el problema, ya que en Spectral Mixture prácticamente se ignoró el término de coseno.
 
-\insertimage[\label{img:untrained}]{img/untrained_gp_periodic_post}{scale=0.38}{Posterior para GP sin entrenar}
+\begin{images}[\label{img:RBFuntrained}]{Posterior para GP con kernel RBF sin entrenar}
+    \addimage{img/untrained_gp_RBF_post}{width=8.2cm}{Parámetros por defecto}
+    \addimage{img/RBF_params/best_manual}{width=8.2cm}{Parámetros manuales}
+\end{images}
 
-Notemos que \lipsum[1]. Por otro lado ...
+Primero notemos que su forma por defecto, que en este caso consideramos como $\sigma=1.0$, $\gamma=1.0$ y $\sigma_n=0.1$, es más suave, como se vislumbra en \ref{img:RBFuntrained} (a). De manera análoga, podemos ``al ojo'' encontrar buenos parámetros, que se ajustan más o menos bien a nuestra serie ($\sigma=5.0$, $\gamma=0.5$ y $\sigma_n=0.25$). Esto ya nos va dando una idea del rol de cada parámetro. Por un lado un $\gamma$ más bien pequeño será como tomar más en cuenta los puntos de la medición. Esto se ve claramente en la figura \ref{img:exp-rbf} (a), donde un valor pequeño de $\gamma$ genera un sobreajuste sobre las observaciones. Por otro lado, el término de escalamiento nos hace acercarnos a la serie original al crecer como se ve en \ref{img:exp-rbf} (b), pese a dejar $\gamma=1$ fijo.
 
-\insertimage[\label{img:trained}]{img/trained_gp_periodic_post}{scale=0.38}{Posterior para GP entrenada}
+\begin{images}[\label{img:exp-rbf}]{Parámetros variados en Kernel RBF}
+    \addimage{img/RBF_params/lscale_0.1}{width=7.8cm}{$\gamma=0.1$}
+    \addimage{img/RBF_params/sigma_50.0}{width=7.8cm}{$\sigma=50.0$}
+\end{images}
+
+Finalmente, la minimización de la log-verosimilitud negativa nos entrega los parámetros: $\sigma = 57.445$, $\gamma = 0.1569$ y $\sigma_n = 1.033$. La figura \ref{img:trainedRBF} nos sugiere que los resultados son muy similares a lo logrado con el kernel mixtura espectral. Acá ganamos en complejidad, pues tenemos menos términos y por ende una convergencia más rápida a los valores apropiados (la mitad de iteraciones de L-BFGS-B aproximadamente). En cuanto a las métricas usadas, en las cuales no se ahondó en las secciones anteriores, el kernel RBF posee una mejor log-verosimilitud negativa $1987.23$, contra $2036.95$. Sin embargo, la mixtura espectral presenta un error cuadrático medio: $1.25$ versus los $1.52$ de RBF. Ambas métricas computadas sobre el conjunto test.
+
+\insertimage[\label{img:trainedRBF}]{img/trained_gp_RBF_post}{scale=0.35}{Posterior para GP con kernel RBF entrenada}
 
 
 % FIN DEL DOCUMENTO
