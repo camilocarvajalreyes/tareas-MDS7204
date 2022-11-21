@@ -77,14 +77,14 @@ En la presenta tarea se presentarán aplicaciones de Procesos Gaussianos usando 
 \section{\textit{Kernel Spectral Mixture}}
 Consideramos primeramente el kernel de Mixtura Espectral dado por: 
 $$K(x)=\sigma^2 exp(-2\pi^2\gamma^2x^2)cos(2\pi\mu x)\,.$$
-Además poseemos un parámetro $\mu_n$ que puede interpretarse como un nivel de confianza en la medición. Para esto, usamos el toolkit \href{https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes}{gp\_lite}, en la cual este kernel viene implementado. Usar los parámetros por defecto ($\sigma = 10, \gamma = 0.5, \mu = 0.1, \sigma_n = 0.1$) nos da un proceso como el mostrado en la figura \ref{img:untrained} (a). Acá nos movemos en el dominio de los minutos. Cuando la serie la definimos en el dominio de los minutos. Vale señalar que los resultados por defecto varían drásticamente al cambiar el dominio inicial (no así luego de entrenar). En la figura \ref{img:untrained} (b) tenemos una actualización manual de parámetros ($\sigma = 10, \gamma = 0.75, \mu = 0.75, \sigma_n = 0.5$) que muestra un ajuste razonable a nuestra serie original. Esto último mejora, en el conjunto test, de 35102.53 a 26846.84 la log-verosimilitud negativa y de n a 9289.50 el error cuadrático medio.
+Además poseemos un parámetro $\mu_n$ que puede interpretarse como un nivel de confianza en la medición. Para esto, usamos el toolkit \href{https://github.com/GAMES-UChile/The_Art_of_Gaussian_Processes}{gp\_lite}, en la cual este kernel viene implementado. Usar los parámetros por defecto ($\sigma = 10, \gamma = 0.5, \mu = 0.1, \sigma_n = 0.1$) nos da un proceso como el mostrado en la figura \ref{img:untrained} (a). Acá nos movemos en el dominio de los minutos. Cuando la serie la definimos en el dominio de los minutos. Vale señalar que los resultados por defecto varían drásticamente al cambiar el dominio inicial (no así luego de entrenar). En la figura \ref{img:untrained} (b) tenemos una actualización manual de parámetros ($\sigma = 10, \gamma = 10, \mu = 0.75, \sigma_n = 0.75$) que muestra un ajuste razonable a nuestra serie original. % Esto último mejora, en el conjunto test, de 35102.53 a 26846.84 la log-verosimilitud negativa y de n a 9289.50 el error cuadrático medio.
 
 \begin{images}[\label{img:untrained}]{Posterior para GP sin entrenar}
     \addimage{img/untrained_gp_SM_post}{width=8.2cm}{Parámetros por defecto}
     \addimage{img/SM_params/best_manual}{width=8.2cm}{Parámetros manuales}
 \end{images}
 
-\subsection{Análisis de parámetros}
+% \subsection{Análisis de parámetros}
 En lo que sigue se realiza un análisis cualitativo de los parámetros del kernel SM. Primero notemos que la variación de $\mu$ se refleja en una frecuencia de oscilación, lo cual se condice con su rol dentro del término coseno. En el gráfico \ref{img:exp-sm} (a) podemos ver el efecto de un valor exageradamente grande, para luego ver un efecto más suave en la parte \ref{img:exp-sm} (b). Por otro lado, las variaciones de el parámetro $sigma$ se manifiestan en menores oscilaciones para parámetros pequeños (no consideramos pertinente incluirlos en el informe). Esto es similar para $\gamma$, en cuyo caso un valor pequeño se manifiesta en un bajo juste a los datos observados (figura \ref{img:exp-sm} (c)). Esto contrasta con el sobre-ajuste que se observa en la figura \ref{img:exp-sm} (d). Esto puesto que el término que multiplica $x$ es demasiado alto y por ende domina el efecto del kernel (con esto no cumple realmente su rol suavizador).
 
 \newp Como parámetro aparte, $\sigma_n$, como es de esperar, es proporcional a la varianza del proceso Gaussiano, con lo cual se admiten posibles más puntos alrededor de la media del posterior. Esto se observa en la sub-figura \ref{img:untrained} (b) anterior.
@@ -112,16 +112,26 @@ Es el kernel ``por defecto'' en algunas implementaciones, lo cual se debe a sus 
     \addimage{img/RBF_params/best_manual}{width=8.2cm}{Parámetros manuales}
 \end{images}
 
-Primero notemos que su forma por defecto, que en este caso consideramos como $\sigma=1.0$, $\gamma=1.0$ y $\sigma_n=0.1$, es más suave, como se vislumbra en \ref{img:RBFuntrained} (a). De manera análoga, podemos ``al ojo'' encontrar buenos parámetros, que se ajustan más o menos bien a nuestra serie ($\sigma=5.0$, $\gamma=0.5$ y $\sigma_n=0.25$). Esto ya nos va dando una idea del rol de cada parámetro. Por un lado un $\gamma$ más bien pequeño será como tomar más en cuenta los puntos de la medición. Esto se ve claramente en la figura \ref{img:exp-rbf} (a), donde un valor pequeño de $\gamma$ genera un sobreajuste sobre las observaciones. Por otro lado, el término de escalamiento nos hace acercarnos a la serie original al crecer como se ve en \ref{img:exp-rbf} (b), pese a dejar $\gamma=1$ fijo.
+Primero notemos que su forma por defecto, que en este caso consideramos como $\sigma=1.0$, $\gamma=1.0$ y $\sigma_n=0.1$, es más suave, como se vislumbra en \ref{img:RBFuntrained} (a). De manera análoga, podemos ``al ojo'' encontrar buenos parámetros, que se ajustan más o menos bien a nuestra serie ($\sigma=5.0$, $\gamma=0.1$ y $\sigma_n=0.5$). Esto ya nos va dando una idea del rol de cada parámetro. Por un lado un $\gamma$ más bien pequeño será como tomar más en cuenta los puntos de la medición. Esto se ve claramente en la figura \ref{img:exp-rbf} (a), donde un valor pequeño de $\gamma$ genera un sobreajuste sobre las observaciones. Por otro lado, el término de escalamiento nos hace acercarnos a la serie original al crecer como se ve en \ref{img:exp-rbf} (b), pese a dejar $\gamma=1$ fijo.
 
 \begin{images}[\label{img:exp-rbf}]{Parámetros variados en Kernel RBF}
     \addimage{img/RBF_params/lscale_0.1}{width=7.8cm}{$\gamma=0.1$}
     \addimage{img/RBF_params/sigma_50.0}{width=7.8cm}{$\sigma=50.0$}
 \end{images}
 
-Finalmente, la minimización de la log-verosimilitud negativa nos entrega los parámetros: $\sigma = 57.445$, $\gamma = 0.1569$ y $\sigma_n = 1.033$. La figura \ref{img:trainedRBF} nos sugiere que los resultados son muy similares a lo logrado con el kernel mixtura espectral. Acá ganamos en complejidad, pues tenemos menos términos y por ende una convergencia más rápida a los valores apropiados (la mitad de iteraciones de L-BFGS-B aproximadamente). En cuanto a las métricas usadas, el kernel RBF posee una mejor log-verosimilitud negativa $1987.23$, contra $2036.95$. Sin embargo, la mixtura espectral presenta un error cuadrático medio: $1.25$ versus los $1.52$ de RBF. Ambas métricas computadas sobre el conjunto test.
+Finalmente, la minimización de la log-verosimilitud negativa nos entrega los parámetros: $\sigma = 57.445$, $\gamma = 0.1569$ y $\sigma_n = 1.033$. La figura \ref{img:trainedRBF} nos sugiere que los resultados son muy similares a lo logrado con el kernel mixtura espectral. Acá ganamos en complejidad, pues tenemos menos términos y por ende una convergencia más rápida a los valores apropiados (la mitad de iteraciones de L-BFGS-B aproximadamente). En cuanto a las métricas usadas, el kernel de mixtura espectral posee una mejor log-verosimilitud negativa. Sin embargo, el kernel RBF presenta un menor error cuadrático medio, alcanzado (curiosamente) por la versión con parámetros encontrados de modo manual (todas reportadas respecto al conjunto de test).
 
 \insertimage[\label{img:trainedRBF}]{img/trained_gp_RBF_post}{scale=0.35}{Posterior para GP con kernel RBF entrenada}
+
+\tiny
+\begin{table}
+\begin{tabular}{|r|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{} & \textbf{SM def} & \textbf{SM manual} & \textbf{SM trained} & \textbf{RBF def} & \textbf{RBF manual} & \textbf{RBF trained} \\ \hline
+\textbf{NLL}                  & 35102           & 1236               & \textbf{821}      & 1873414          & 1255                & 874                \\ \hline
+\textbf{MSE}                  & 19.39           & 2.05               & 1.25              & 26.64            & \textbf{1.23}       & 1.52               \\ \hline
+\end{tabular}
+\end{table}
 
 
 % FIN DEL DOCUMENTO
