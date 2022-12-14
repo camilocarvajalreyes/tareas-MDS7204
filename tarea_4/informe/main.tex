@@ -15,7 +15,7 @@
 \documentclass[letterpaper,11pt,oneside]{article}
 
 % INFORMACIÓN DEL DOCUMENTO
-\def\titulodelreporte {\textbf{Tarea 4 - Reporte de modelo generativo}}
+\def\titulodelreporte {\textbf{Tarea 4 - Reporte de modelo generativo}\\ \textit{Residual Energy-Based Models for Text Generation}}
 \def\temaatratar {Tarea 4}
 \def\fechadelreporte {\today}
 
@@ -70,7 +70,87 @@
 % Título y nombre del autor
 \inserttitle
 
+\textit{Residual Energy-Based Models for Text Generation} es un trabajo en el cual se propone un método para mejorar la generación de texto que viene de un modelo de lenguaje pre-entrenado (que llamaremos ML). La idea general es entrenar un discriminador que detecte si una frase es natural o bien generada con un ML. Con esto, la distribución propuesta por el ML será la \textit{proposal distribution} y el discriminador ponderará las probabilidades para luego re-samplear como en \textit{importance sampling}. Formalmente el modelo generativo a considerar es:
+
+$$ P_\theta(x) \propto P_{ML}(x) \cdot \exp(-E_\theta(x)) \,,$$
+
+con lo cual el entrenamiento se reduce a encontrar los parámetros de la energía $\theta$ que asignen baja energía a texto humano. Esto se logra de manera eficiente usando \textit{conditional noise contrastive estimation} (conditional NCE). Finalmente, la formulación residual hace posible la estimación de la perplejidad mediante cotas de esta, las cuales muestran una mejora empírica de esta métrica de calidad de lenguaje generado con respecto a MLs clásicos.
+
+\section{Modelos Energy-Based}
 \lipsum[1]
+
+Algunos modelos de energía para texto
+
+\lipsum[1]
+
+\section{Modelos generativos para texto}
+\iffalse
+\subsection{Modelos de lenguaje}
+\fi
+Modelos de lenguaje Explicar brevemente global normalization(?)
+
+\lipsum[2]
+
+\iffalse
+\subsection{Desafios de sampleo y otros métodos}
+\fi
+Desafios de sampleo y otros métodos
+\lipsum[3]
+
+\section{Modelo de energía residual}
+Por qué residual?
+
+Formalización en términos de secuencia
+
+\lipsum[4]
+
+\section{Entrenamiento}
+% \iffalse
+\subsection{Noise Contrastive Estimation}
+% \fi
+Noise Contrastive Estimation
+\lipsum[5]
+
+% \iffalse
+\subsection{Función objetivo}
+% \fi
+Función objetivo y justificación teórica \lipsum[6]
+
+\section{Sampleo}
+Introducir self normalizing importance sampling
+
+\lipsum[7]
+
+Algoritmo top-k Joint Sampling
+
+\lipsum[8]
+
+\section{Evaluación con Perplejidad}
+Introducir perplejidad como métrica
+
+\lipsum[9]
+
+Cotas teóricas empíricas
+
+\lipsum[10]
+
+\section{Resultados y conclusiones}
+Mejoras en perplejidad
+\lipsum[11]
+
+Limitaciones de perplejidad y evaluación humana
+
+Dependencia de calidad del ML.
+
+\lipsum[12]
+
+\iffalse
+\section{Referencias}
+\fi
+\begin{references}
+    \bibitem{paper} Deng, Y., Bakhtin, A., Ott, M., Szlam, A., & Ranzato, M. (2022, February 10). Residual Energy-Based Models for Text Generation. International Conference on Learning Representations. \url{https://openreview.net/forum?id=B1l4SgHKDH}
+
+\end{references}
 
 
 % FIN DEL DOCUMENTO
