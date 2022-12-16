@@ -18,5 +18,5 @@ Entregables del ramo MDS7204 - Aprendizaje de Máquinas Avanzado Primavera 2022
 - [Clases Kernel](unidad_2/tarea_3/gp/kernels.py)
 
 ## Unidad 3 - Modelos Generativos
-### **Tarea 4 - Reporte de artículo sobre modelo generativo**
+### **Tarea 4 - Reporte de artículo sobre modelo generativo**[Informe (pdf)](tarea_4/Informe_Tarea_4_Modelos_Generativos.pdf)
 - Paper a estudiar: [Deng et al. Residual Energy-Based Models for Text Generation](https://openreview.net/pdf?id=B1l4SgHKDH)
